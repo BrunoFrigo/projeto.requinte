@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cardápio • Demo</title>
+  <title>Cardápio • Requinte Bar e Cozinha</title>
   <style>
     :root {
       --bg: #000000;
@@ -11,9 +11,9 @@
       --panel-2: #1a1f36;
       --accent: #000000;
       --accent-2: #000000;
-      --text: #e6e9f2;
+      --text: #d8dceb;
       --muted: #aab1c6;
-      --danger: #ff6b6b;
+      --danger: #f56b6b;
       --success: #34d399;
       --shadow: 0 10px 30px rgba(0,0,0,.35);
       --radius: 16px;
@@ -37,7 +37,8 @@
       display: grid; grid-template-columns: 1fr auto 480px; gap: 16px; align-items: center; padding: 16px 24px;
     }
     .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing:.3px; }
-    .brand .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: var(--shadow); display:grid;place-items:center; font-weight:900; }
+    .brand .logo { width: 80px; height: 60px; border-radius: 10px; display:grid;place-items:center; overflow:hidden; }
+    .brand .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 
     .status { display: flex; align-items: center; gap: 10px; justify-content: center; }
     .badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing:.3px; }
@@ -55,11 +56,11 @@
       color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer;
       box-shadow: var(--shadow);
     }
-    .btn.secondary { background: none; border:1px solid rgba(167,139,250,.35); color: var(--text); box-shadow: none; }
+    .btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.35); color: var(--text); box-shadow: none; }
     .btn:disabled { opacity:.6; cursor:not-allowed; }
 
     .layout { display: grid; grid-template-columns: 1fr 370px; gap: 22px; padding: 24px; }
-    .panel { background: linear-gradient(180deg, var(--panel), rgba(20,24,43,.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
 
     .filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.12); flex-wrap: wrap; }
     .chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; }
@@ -94,9 +95,11 @@
   <header>
     <div class="nav">
       <div class="brand">
-        <div class="logo">🍔</div>
+        <div class="logo">
+          <img src="requintelogo.png.jpeg" alt="Requinte Bar e Cozinha" />
+        </div>
         <div>
-          <div style="font-size:18px; line-height:1;">Requinte Bar e cozinha</div>
+          <div style="font-size:19px; line-height:1;">Requinte Bar e Cozinha</div>
           <small style="color:var(--muted)">Cardápio online</small>
         </div>
       </div>
@@ -159,9 +162,9 @@
     { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
     { id: 3, name: 'Porção Peixe + Fritas', price: 60.5, category: 'Porções', desc: '500g de filé de tilápia, 500g de batata frita', img: 'https://img.freepik.com/fotos-premium/isca-de-peixe-com-batatas-fritas_538646-12784.jpg' },
     { id: 4, name: 'Batata Crinkle', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
-    { id: 5, name: 'Onion Rings', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://via.placeholder.com/300' },
+    { id: 5, name: 'Onion Rings', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://st3.depositphotos.com/1764206/32933/i/450/depositphotos_329339034-stock-photo-homemade-crunchy-fried-onion-rings.jpg' },
     { id: 6, name: 'Refrigerante Lata', price: 6.5, category: 'Bebidas', desc: '350 ml', img: 'https://s3-sa-east-1.amazonaws.com/deliveryon-uploads/products/sabordabarrafit/36_62b09af6e68a8.png' },
-    { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://via.placeholder.com/300' },
+    { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
     { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
   ];
 
@@ -230,155 +233,106 @@
               <button class="step" data-step="1">+</button>
             </div>
           </div>
-          <button class="btn" style="margin-top:8px; width:100%">Adicionar</button>
-        </div>`;
-      const [minus, qtyInput, plus] = card.querySelectorAll('.step, input');
-      minus.onclick = () => { qtyInput.value = Math.max(0, (parseInt(qtyInput.value||'0',10) - 1)); };
-      plus.onclick = () => { qtyInput.value = (parseInt(qtyInput.value||'0',10) + 1); };
-      card.querySelector('.btn').onclick = () => {
-        const qty = Math.max(0, parseInt(qtyInput.value||'0',10));
-        if (qty === 0) return;
-        state.cart[p.id] = (state.cart[p.id]||0) + qty;
-        qtyInput.value = 0;
-        saveState();
-        renderCart();
-      };
+          <button class="btn" style="margin-top:8px">Adicionar</button>
+        </div>
+      `;
       el.appendChild(card);
+      const input = card.querySelector('input');
+      const update = () => { 
+        const qty = Math.max(0, parseInt(input.value) || 0);
+        if (qty === 0) delete state.cart[p.id]; else state.cart[p.id] = qty;
+        saveState(); renderCart();
+      };
+      card.querySelectorAll('.step').forEach(btn => {
+        btn.onclick = () => { input.value = (parseInt(input.value)||0) + Number(btn.dataset.step); update(); };
+      });
+      card.querySelector('.btn').onclick = () => { input.value = (parseInt(input.value)||0)+1; update(); };
+      input.onchange = update;
     });
   }
 
   function renderCart() {
     const list = qs('#cartList');
     list.innerHTML = '';
-    Object.entries(state.cart).forEach(([id, qty]) => {
-      const product = byId(Number(id));
-      if (!product) return;
-      const row = document.createElement('div');
-      row.className = 'cart-item';
-      row.innerHTML = `
-        <span>${qty}× ${product.name}</span>
-        <span>${money(product.price * qty)}</span>
-        <button class="remove">×</button>`;
-      row.querySelector('.remove').onclick = () => {
-        delete state.cart[id]; saveState(); renderCart();
-      };
-      list.appendChild(row);
-    });
-
-    const subtotal = Object.entries(state.cart).reduce((t,[id,qty]) => {
+    let subtotal = 0;
+    for (const id in state.cart) {
       const p = byId(Number(id));
-      return t + p.price*qty;
-    },0);
-
-    const delivery = DELIVERY_FEES[state.location] || 0;
-    const total = subtotal + delivery;
+      const qty = state.cart[id];
+      subtotal += p.price * qty;
+      const item = document.createElement('div');
+      item.className = 'cart-item';
+      item.innerHTML = `
+        <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
+        <div>${money(p.price * qty)}</div>
+        <button class="remove">×</button>
+      `;
+      item.querySelector('.remove').onclick = () => { delete state.cart[id]; saveState(); renderCart(); };
+      list.appendChild(item);
+    }
     qs('#subtotal').textContent = money(subtotal);
-    qs('#delivery').textContent = money(delivery);
+    const fee = DELIVERY_FEES[state.location] || 0;
+    qs('#delivery').textContent = money(fee);
+    const total = subtotal + fee;
     qs('#total').textContent = money(total);
   }
 
-  function updateOpenStatus() {
-    const now = new Date();
-    const h = now.getHours();
-    const open = (h >= 18 && h < 23);
-    const badge = qs('#openBadge');
-    badge.textContent = open ? 'Aberto' : 'Fechado';
-    badge.className = `badge ${open?'open':'closed'}`;
-    qs('#hoursText').textContent = '18h às 23h';
-    return open;
-  }
-
-  function gerarPix(nome, chave, descricao, valor, id){
-      return `00020126680014BR.GOV.BCB.PIX0114${chave}520400005303986540${valor.toFixed(2).replace('.',',')}5802BR5913${nome}6009Requinte62070503***6304ABCD`;
-  }
-
-  function checkout() {
-    if (!updateOpenStatus()) return alert('Estamos fora do horário de atendimento!');
-    if (Object.keys(state.cart).length === 0) return alert('Carrinho vazio!');
-    let items = Object.entries(state.cart).map(([id,qty])=>{
+  function updatePixCode() {
+    if (state.payment !== 'Pix') return;
+    const fee = DELIVERY_FEES[state.location] || 0;
+    let subtotal = 0;
+    for (const id in state.cart) {
       const p = byId(Number(id));
-      return `• ${qty}× ${p.name} = ${money(p.price*qty)}`;
-    }).join('\n');
-    const subtotal = Object.entries(state.cart).reduce((t,[id,qty])=>t+byId(Number(id)).price*qty,0);
-    const delivery = DELIVERY_FEES[state.location] || 0;
-    const total = subtotal + delivery;
-    let text = `Novo Pedido \n\n${items}\n\nSubtotal: ${money(subtotal)}\nEntrega: ${money(delivery)}\n*Total: ${money(total)}*\n\n Local: ${state.location}`;
-    if (state.location !== 'RETIRADA') text += `\nEndereço: ${state.address}`;
-    if (state.time) text += `\n⏰ Horário: ${state.time}`;
-    
-    if(state.payment === 'Pix'){
-        text += `\n Pagamento: Pix\nCódigo Pix:\n${qs('#pixCode').value}`;
-    } else {
-        text += `\n Pagamento: ${state.payment}`;
-        if (state.payment === 'Dinheiro' && state.troco) text += ` (Troco para ${state.troco})`;
+      subtotal += p.price * state.cart[id];
     }
-
-    const url = 'https://wa.me/5549999588244?text=' + encodeURIComponent(text);
-    window.open(url,'_blank');
+    const total = subtotal + fee;
+    const pixKey = "11999999999"; // <-- sua chave Pix aqui
+    const pixPayload = `00020126360014BR.GOV.BCB.PIX0114${pixKey}520400005303986540${total.toFixed(2)}5802BR5925Requinte Bar e Cozinha6009SaoPaulo62070503***6304ABCD`;
+    qs('#pixCode').value = pixPayload;
   }
 
-  function init() {
-    renderFilters();
-    renderMenu();
-    renderCart();
-    updateOpenStatus();
-
-    qs('#locationSelect').value = state.location;
-    qs('#addressInput').value = state.address;
-    qs('#timeInput').value = state.time;
-    qs('#paymentSelect').value = state.payment;
-    qs('#trocoInput').value = state.troco;
-    qs('#trocoInput').style.display = state.payment === 'Dinheiro' ? 'block':'none';
-
-    qs('#locationSelect').onchange = e => { state.location = e.target.value; saveState(); renderCart(); };
-    qs('#addressInput').oninput = e => { state.address = e.target.value; saveState(); };
-    qs('#timeInput').oninput = e => { state.time = e.target.value; saveState(); };
-
-    qs('#paymentSelect').onchange = e => {
-        state.payment = e.target.value; 
-        saveState();
-        
-        qs('#trocoInput').style.display = state.payment === 'Dinheiro' ? 'block' : 'none';
-        const pixCode = qs('#pixCode');
-        const copyPixBtn = qs('#copyPixBtn');
-        
-        pixCode.style.display = state.payment === 'Pix' ? 'block' : 'none';
-        copyPixBtn.style.display = state.payment === 'Pix' ? 'block' : 'none';
-        
-        if(state.payment === 'Pix') {
-            const subtotal = Object.entries(state.cart).reduce((t,[id,qty]) => t + byId(Number(id)).price*qty,0);
-            const delivery = DELIVERY_FEES[state.location] || 0;
-            const total = subtotal + delivery;
-            const chave = "brunofrigo092@gmail.com"; // sua chave Pix
-            pixCode.value = gerarPix("Requinte Bar", chave, "Pedido", total, "REQ123");
-        }
-    };
-
-    qs('#trocoInput').oninput = e => { 
-      let raw = e.target.value.replace(/\D/g, '');
-      if (raw) {
-        const valor = parseFloat(raw) / 100;
-        state.troco = BRL.format(valor);
-        e.target.value = state.troco;
-      } else {
-        state.troco = '';
-      }
-      saveState();
-    };
-
-    qs('#copyPixBtn').onclick = () => {
-      const pixCode = qs('#pixCode');
-      navigator.clipboard.writeText(pixCode.value)
-        .then(() => alert('Código Pix copiado!'))
-        .catch(() => alert('Erro ao copiar o código Pix!'));
-    };
-
-    qs('#checkoutBtn').onclick = checkout;
-    qs('#clearBtn').onclick = () => { Object.assign(state,{cart:{},address:'',time:'',payment:'Dinheiro',troco:''}); saveState(); renderCart(); };
-    qs('#emptyBtn').onclick = () => { state.cart = {}; saveState(); renderCart(); };
-    setInterval(updateOpenStatus, 60000);
+  function updatePaymentUI() {
+    qs('#trocoInput').style.display = state.payment === 'Dinheiro' ? 'block' : 'none';
+    qs('#pixCode').style.display = state.payment === 'Pix' ? 'block' : 'none';
+    qs('#copyPixBtn').style.display = state.payment === 'Pix' ? 'block' : 'none';
+    if (state.payment === 'Pix') updatePixCode();
   }
-  init();
+
+  // Eventos
+  qs('#locationSelect').onchange = e => { state.location = e.target.value; saveState(); renderCart(); };
+  qs('#addressInput').oninput = e => { state.address = e.target.value; saveState(); };
+  qs('#timeInput').oninput = e => { state.time = e.target.value; saveState(); };
+  qs('#paymentSelect').onchange = e => { state.payment = e.target.value; saveState(); updatePaymentUI(); };
+  qs('#trocoInput').oninput = e => { state.troco = e.target.value; saveState(); };
+  qs('#clearBtn').onclick = () => { localStorage.clear(); location.reload(); };
+  qs('#emptyBtn').onclick = () => { state.cart = {}; saveState(); renderCart(); };
+  qs('#copyPixBtn').onclick = () => {
+    qs('#pixCode').select();
+    document.execCommand('copy');
+    alert('Código Pix copiado!');
+  };
+
+  // Status de funcionamento
+  function checkHours() {
+    const now = new Date();
+    const hour = now.getHours();
+    const open = hour >= 18 && hour < 23;
+    const badge = qs('#openBadge');
+    if (open) { badge.textContent = 'Aberto'; badge.className = 'badge open'; }
+    else { badge.textContent = 'Fechado'; badge.className = 'badge closed'; }
+    qs('#hoursText').textContent = 'Atendimento: 18h - 23h';
+  }
+
+  // Inicialização
+  renderFilters();
+  renderMenu();
+  renderCart();
+  checkHours();
+  qs('#locationSelect').value = state.location;
+  qs('#addressInput').value = state.address;
+  qs('#timeInput').value = state.time;
+  qs('#paymentSelect').value = state.payment;
+  qs('#trocoInput').value = state.troco;
+  updatePaymentUI();
   </script>
 </body>
 </html>
