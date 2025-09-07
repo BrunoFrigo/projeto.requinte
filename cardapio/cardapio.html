@@ -28,7 +28,6 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
 }
-/* Fundo de madeira rústica desfocado */
 body::before{
   content: '';
   position: fixed; inset: 0; z-index: -2;
@@ -37,7 +36,6 @@ body::before{
   filter: blur(6px) saturate(0.8) contrast(.95);
   transform: scale(1.02);
 }
-/* camada escura para contraste */
 body::after{
   content: '';
   position: fixed; inset: 0; z-index: -1;
@@ -110,12 +108,10 @@ header {
 
 #whatsappBtn { background-color:#25D366; border:none; color:white; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); margin-top:8px; }
 
-/* aviso do site (fora do carrinho) */
 .site-notice { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 16px; border-radius:10px; margin: 8px 24px; }
 .site-notice.info{ background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(52,211,153,0.06)); border:1px solid rgba(167,139,250,0.06); color: var(--text); }
 .site-notice.hidden{ display:none; }
 
-/* 🔹 Botão desabilitado */
 button:disabled { background-color: #888 !important; cursor: not-allowed !important; opacity: 0.7; }
 
 .badge-product { position: absolute; top: 10px; left: 10px; background: #ff5722; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
@@ -155,7 +151,7 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
       <option value="Bairro Portal Do Sol">Bairro Portal Do Sol</option>
       <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
     </select>
-    <input id="addressInput" class="input" placeholder="Endereço (de entrega)" />
+    <!-- Endereço removido -->
     <select id="paymentSelect" class="select">
       <option value="Dinheiro">Dinheiro</option>
       <option value="Pix">Pix</option>
@@ -167,7 +163,6 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
     <button id="clearBtn" class="btn secondary">Limpar</button>
   </div>
 </div>
-<!-- aviso do site (fora do carrinho) -->
 <div id="siteNotice" class="site-notice info hidden" aria-live="polite">
   <div id="siteNoticeText">Pedidos só podem ser finalizados dentro do horário de atendimento.</div>
   <div style="font-weight:700; color:var(--muted)" id="siteNoticeHours"></div>
@@ -191,15 +186,14 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
       <div style="display:flex; justify-content:space-between"><span>Entrega</span><strong id="delivery">R$ 0,00</strong></div>
       <div style="display:flex; justify-content:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
       <button id="whatsappBtn" disabled>Enviar para WhatsApp</button>
-      <!-- aviso removido do carrinho conforme solicitado -->
     </div>
   </aside>
 </div>
 </main>
 
 <script>
+// ==== Configurações e estado ====
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-
 const PRODUCTS = [
   { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
   { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
@@ -210,200 +204,144 @@ const PRODUCTS = [
   { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
-
 const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
-const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', address: '', payment: 'Dinheiro', troco: '' };
-let isOpen = false; // controla se está no horário de atendimento
+const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', address: '', payment: 'Dinheiro', troco: '', currentLocation: '' };
+let isOpen = false;
 
-const qs = (s, el=document) => el.querySelector(s);
-const qsa = (s, el=document) => [...el.querySelectorAll(s)];
-const byId = (id) => PRODUCTS.find(p => p.id === id);
-const money = (n) => BRL.format(n);
+// ==== Utilitários ====
+const byId = id => document.getElementById(id);
 
+// ==== Filtros e Menu ====
 function renderFilters() {
   const categories = ['Todos', ...new Set(PRODUCTS.map(p=>p.category))];
-  qs('#filters').innerHTML = categories.map(cat => 
-    `<button class="chip${state.filter===cat?' active':''}" data-cat="${cat}">${cat}</button>`
-  ).join('');
-  qsa('.chip').forEach(b=>{ b.onclick = () => { state.filter = b.dataset.cat; renderMenu(); qsa('.chip').forEach(c=>c.classList.remove('active')); b.classList.add('active'); }; });
+  const container = byId('filters'); container.innerHTML='';
+  categories.forEach(cat=>{
+    const chip = document.createElement('div');
+    chip.className = 'chip'+(state.filter===cat?' active':'');
+    chip.textContent = cat;
+    chip.addEventListener('click',()=>{ state.filter=cat; renderMenu(); renderFilters(); });
+    container.appendChild(chip);
+  });
 }
 
 function renderMenu() {
-  const list = state.filter==='Todos' ? PRODUCTS : PRODUCTS.filter(p=>p.category===state.filter);
-  const el = qs('#menu'); el.innerHTML='';
-  list.forEach(p=>{
-    const card = document.createElement('article'); card.className='card';
+  const menu = byId('menu');
+  const filtered = state.filter==='Todos'?PRODUCTS:PRODUCTS.filter(p=>p.category===state.filter);
+  menu.innerHTML='';
+  filtered.forEach(p=>{
+    const card = document.createElement('div'); card.className='card';
     card.innerHTML=`
-      ${p.badge?`<div class="badge-product">${p.badge}</div>`:''}
       <div class="thumb"><img src="${p.img}" alt="${p.name}"/></div>
       <div class="card-body">
         <div class="title">${p.name}</div>
         <div class="desc">${p.desc}</div>
-        <div style="display:flex; align-items:center; justify-content:space-between;">
-          <div class="price">${money(p.price)}</div>
-          <div class="qty">
-            <button class="step" data-step="-1">−</button>
-            <input type="number" min="0" value="${state.cart[p.id]||0}" style="width:48px; text-align:center;" />
-            <button class="step" data-step="1">+</button>
-          </div>
+        <div class="price">${BRL.format(p.price)}</div>
+        <div class="qty">
+          <button class="step" data-id="${p.id}" data-action="dec">-</button>
+          <span id="qty-${p.id}">${state.cart[p.id]||0}</span>
+          <button class="step" data-id="${p.id}" data-action="inc">+</button>
         </div>
-        <button class="btn" style="margin-top:8px">Adicionar</button>
       </div>
     `;
-    el.appendChild(card);
-    const input = card.querySelector('input');
-    const update = () => { let qty = Math.max(0, parseInt(input.value)||0); input.value = qty; if(qty===0) delete state.cart[p.id]; else state.cart[p.id]=qty; renderCart(); };
-    card.querySelectorAll('.step').forEach(btn=>btn.onclick=()=>{ input.value = Math.max(0,(parseInt(input.value)||0)+Number(btn.dataset.step)); update(); });
-    card.querySelector('.btn').onclick=()=>{ input.value=(parseInt(input.value)||0)+1; update(); };
-    input.onchange=update;
+    if(p.badge){ const b=document.createElement('div'); b.className='badge-product'; b.textContent=p.badge; card.appendChild(b);}
+    menu.appendChild(card);
   });
 }
 
-function updateWhatsAppButtonState(){
-  const btn = qs('#whatsappBtn');
-  const empty = Object.keys(state.cart).length===0;
-  btn.disabled = empty || !isOpen;
+// ==== Carrinho ====
+function updateCart(id, action){
+  const prod = PRODUCTS.find(p=>p.id===id); if(!prod) return;
+  if(action==='inc'){ state.cart[id]=(state.cart[id]||0)+1; } 
+  else { state.cart[id]=Math.max(0,(state.cart[id]||0)-1); if(state.cart[id]===0) delete state.cart[id]; }
+  byId(`qty-${id}`).textContent=state.cart[id]||0; renderCart();
 }
 
-function renderCart() {
-  const list = qs('#cartList'); list.innerHTML='';
+function renderCart(){
+  const list = byId('cartList'); list.innerHTML='';
   let subtotal=0;
-  for(const id in state.cart){
-    const p = byId(Number(id));
-    const qty = state.cart[id];
-    subtotal += p.price*qty;
+  for(const [id,qty] of Object.entries(state.cart)){
+    const prod = PRODUCTS.find(p=>p.id==id);
+    subtotal += prod.price*qty;
     const item = document.createElement('div'); item.className='cart-item';
-    item.innerHTML=`
-      <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
-      <div>${money(p.price*qty)}</div>
-      <button class="remove" aria-label="Remover item">×</button>
-    `;
-    item.querySelector('.remove').onclick=()=>{ delete state.cart[id]; renderCart(); };
+    item.innerHTML=`<span>${qty}x ${prod.name}</span><span>${BRL.format(prod.price*qty)}</span><button class="remove" data-id="${id}">X</button>`;
     list.appendChild(item);
   }
-  qs('#subtotal').textContent = money(subtotal);
-  const fee = DELIVERY_FEES[state.location]||0;
-  qs('#delivery').textContent = money(fee);
-  const total = subtotal+fee;
-  qs('#total').textContent = money(total);
-
-  updateWhatsAppButtonState();
-
-  if(state.payment==='Pix') updatePixCode();
+  const delivery = DELIVERY_FEES[state.location]||0;
+  const total = subtotal + delivery;
+  byId('subtotal').textContent=BRL.format(subtotal);
+  byId('delivery').textContent=BRL.format(delivery);
+  byId('total').textContent=BRL.format(total);
+  byId('whatsappBtn').disabled = Object.keys(state.cart).length===0 || !isOpen;
 }
 
-function updatePixCode(){
-  const fee = DELIVERY_FEES[state.location]||0;
-  let subtotal=0;
-  for(const id in state.cart) subtotal += byId(Number(id)).price*state.cart[id];
-  const total=(subtotal+fee).toFixed(2);
-  const pixKey = "11999999999";
-  // Exemplo simplificado de payload Pix (não é payload de cobrança real)
-  const pixPayload = `00020126360014BR.GOV.BCB.PIX0114${pixKey}520400005303986540${total}5802BR5925Requinte Bar e Cozinha6009SaoPaulo62070503***6304ABCD`;
-  qs('#pixCode').value = pixPayload;
+// ==== Eventos ====
+document.addEventListener('click', e=>{
+  if(e.target.classList.contains('step')) updateCart(parseInt(e.target.dataset.id), e.target.dataset.action);
+  if(e.target.classList.contains('remove')){ delete state.cart[parseInt(e.target.dataset.id)]; renderCart(); renderMenu(); }
+});
+
+byId('emptyBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); });
+byId('clearBtn').addEventListener('click', ()=>{
+  state.cart={}; renderCart(); renderMenu();
+  state.troco=''; byId('trocoInput').value='';
+  state.payment='Dinheiro'; byId('paymentSelect').value='Dinheiro';
+});
+
+byId('locationSelect').addEventListener('change', e=>{
+  state.location = e.target.value; renderCart(); updateCurrentLocation();
+});
+
+byId('paymentSelect').addEventListener('change', e=>{
+  state.payment=e.target.value;
+  if(state.payment==='Dinheiro'){ byId('trocoInput').style.display='block'; byId('pixCode').style.display='none'; byId('copyPixBtn').style.display='none'; }
+  else if(state.payment==='Pix'){ byId('trocoInput').style.display='none'; byId('pixCode').style.display='block'; byId('copyPixBtn').style.display='block'; generatePix(); }
+  else { byId('trocoInput').style.display='none'; byId('pixCode').style.display='none'; byId('copyPixBtn').style.display='none'; }
+});
+
+byId('trocoInput').addEventListener('input', e=>{ state.troco=e.target.value; });
+
+function generatePix(){ byId('pixCode').value = `PIX Copie e cole para pagar: ${byId('total').textContent}`; }
+byId('copyPixBtn').addEventListener('click', ()=>{ byId('pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!'); });
+
+byId('whatsappBtn').addEventListener('click', ()=>{
+  let msg='*Novo Pedido:*\n';
+  for(const [id,qty] of Object.entries(state.cart)){
+    const prod = PRODUCTS.find(p=>p.id==id);
+    msg += `${qty}x ${prod.name} - ${BRL.format(prod.price*qty)}\n`;
+  }
+  msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n`;
+  msg += `\n*Local:* ${state.location}\n`;
+  if(state.location !== 'RETIRADA' && state.currentLocation){
+    msg += `*Localização em tempo real:* ${state.currentLocation}\n`;
+  }
+  msg += `*Pagamento:* ${state.payment}\n`;
+  window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
+});
+
+// ==== Horário de atendimento ====
+function checkOpenHours(){
+  const now = new Date(); const hours = now.getHours();
+  isOpen = (hours>=11 && hours<22);
+  const badge = byId('openBadge');
+  badge.textContent = isOpen?'Aberto':'Fechado';
+  badge.className = 'badge '+(isOpen?'open':'closed');
+  document.getElementById('siteNotice').classList.toggle('hidden',isOpen);
+}
+setInterval(checkOpenHours,1000); checkOpenHours();
+
+// ==== Geolocalização condicional ====
+function updateCurrentLocation() {
+  if(state.location !== 'RETIRADA' && navigator.geolocation) {
+    navigator.geolocation.watchPosition(
+      (pos) => { const { latitude, longitude } = pos.coords; state.currentLocation = `https://www.google.com/maps?q=${latitude},${longitude}`; },
+      (err) => { console.warn('Não foi possível obter a localização:', err.message); state.currentLocation = ''; },
+      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
+    );
+  } else { state.currentLocation = ''; }
 }
 
-function updatePaymentUI(){
-  qs('#trocoInput').style.display = state.payment==='Dinheiro'?'block':'none';
-  qs('#pixCode').style.display = state.payment==='Pix'?'block':'none';
-  qs('#copyPixBtn').style.display = state.payment==='Pix'?'block':'none';
-  if(state.payment==='Pix') updatePixCode();
-}
-
-qs('#locationSelect').onchange = e => { state.location=e.target.value; renderCart(); };
-qs('#addressInput').oninput = e => { state.address=e.target.value; };
-qs('#paymentSelect').onchange = e => { state.payment=e.target.value; updatePaymentUI(); };
-qs('#trocoInput').oninput = e => { state.troco=e.target.value; };
-qs('#clearBtn').onclick = () => { location.reload(); };
-qs('#emptyBtn').onclick = () => { state.cart={}; renderCart(); };
-
-qs('#copyPixBtn').onclick = async ()=>{ 
-  const text = qs('#pixCode').value || '';
-  try{
-    if(navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
-    else { qs('#pixCode').select(); document.execCommand('copy'); }
-    alert('Código Pix copiado!');
-  }catch(e){ alert('Não foi possível copiar o Pix.'); }
-};
-
-// Envio para WhatsApp — com verificação de horário, endereço e dispositivo
-qs('#whatsappBtn').onclick = ()=> {
-  if(!isOpen){ alert('Estamos fechados no momento! Não é possível enviar pedidos.'); return; }
-  if(Object.keys(state.cart).length===0){ alert('O carrinho está vazio!'); return; }
-  if(state.location!=='RETIRADA' && !state.address){ alert('Informe o endereço!'); return; }
-
-  const fee = DELIVERY_FEES[state.location]||0;
-  let subtotal=0;
-  let lines = [];
-  lines.push('Pedido do Cardápio:');
-
-  for(const id in state.cart){
-    const p = byId(Number(id));
-    const qty = state.cart[id];
-    subtotal += p.price*qty;
-    lines.push(`${qty}x ${p.name} - ${money(p.price*qty)}`);
-  }
-
-  lines.push('');
-  lines.push(`Subtotal: ${money(subtotal)}`);
-  lines.push(`Entrega: ${money(fee)}`);
-  lines.push(`Total: ${money(subtotal+fee)}`);
-  lines.push('');
-  lines.push(`Pagamento: ${state.payment}`);
-  if(state.payment==='Dinheiro' && state.troco) lines.push(`Troco para: R$ ${state.troco}`);
-
-  if(state.location!=='RETIRADA'){
-    lines.push(`Local: ${state.location}`);
-    lines.push(`Endereço: ${state.address}`);
-  }
-
-  const msg = lines.join('\n');
-  const encoded = encodeURIComponent(msg);
-
-  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
-  const phone = "5549991853548"; // seu número
-  const url = isMobile ? `https://wa.me/${phone}?text=${encoded}` : `https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`;
-
-  // redireciona
-  location.href = url;
-};
-
-function checkHours(){
-  const now = new Date();
-  const hour = now.getHours();
-  // Horário de atendimento: 18:00 - 23:00
-  isOpen = hour>=18 && hour<23;
-  const badge = qs('#openBadge');
-  const siteNotice = qs('#siteNotice');
-  const siteNoticeText = qs('#siteNoticeText');
-  const siteNoticeHours = qs('#siteNoticeHours');
-
-  if(isOpen){ 
-    badge.textContent='Aberto'; badge.className='badge open';
-    siteNotice.classList.remove('info');
-    siteNotice.classList.add('hidden');
-  }
-  else { 
-    badge.textContent='Fechado'; badge.className='badge closed';
-    siteNotice.classList.remove('hidden');
-    siteNotice.classList.add('info');
-    siteNoticeText.textContent = 'No momento estamos fechados. Pedidos só podem ser finalizados dentro do horário de atendimento.';
-    siteNoticeHours.textContent = 'Atendimento: 18h - 23h';
-  }
-  qs('#hoursText').textContent='Atendimento: 18h - 23h';
-  updateWhatsAppButtonState();
-}
-
-// Inicialização
-renderFilters(); renderMenu(); renderCart(); checkHours();
-qs('#locationSelect').value=state.location;
-qs('#addressInput').value=state.address;
-qs('#paymentSelect').value=state.payment;
-qs('#trocoInput').value=state.troco;
-updatePaymentUI();
-
-// Atualiza horário a cada minuto (opcional)
-setInterval(checkHours, 60 * 1000);
+// ==== Inicialização ====
+renderFilters(); renderMenu(); renderCart(); updateCurrentLocation();
 </script>
 </body>
 </html>
