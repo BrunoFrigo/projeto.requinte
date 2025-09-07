@@ -57,7 +57,7 @@ header {
 .brand .logo { width: 80px; height: 60px; border-radius: 10px; display:grid;place-items:center; overflow:hidden; }
 .brand .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 
-.status { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.status { display: flex; align-items: center; gap: 12px; }
 .badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing:.3px; }
 .badge.open { background: rgba(52,211,153,.12); color: var(--success); border:1px solid rgba(52,211,153,.25); }
 .badge.closed { background: rgba(255,107,107,.12); color: var(--danger); border:1px solid rgba(255,107,107,.18); }
@@ -95,7 +95,7 @@ header {
 .qty { 
   display:flex; 
   align-items:center; 
-  justify-content:center;
+  justify-content:center; 
   gap:8px;
 }
 .step { background: none; border:1px solid rgba(18, 0, 71, 0.12); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
@@ -147,7 +147,7 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
   </div>
   <div class="status">
     <span id="openBadge" class="badge">Carregando…</span>
-    <span id="hoursText" class="footer-note"></span>
+    <span id="hoursText" class="footer-note">Horário: 11:00 às 22:00</span>
   </div>
   <div class="controls">
     <select id="locationSelect" class="select">
@@ -171,7 +171,6 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
 </div>
 <div id="siteNotice" class="site-notice info hidden" aria-live="polite">
   <div id="siteNoticeText">Pedidos só podem ser finalizados dentro do horário de atendimento.</div>
-  <div style="font-weight:700; color:var(--muted)" id="siteNoticeHours"></div>
 </div>
 </header>
 
@@ -200,6 +199,9 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
 <script>
 // ==== Configurações e estado ====
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+const OPEN_HOUR = 11;
+const CLOSE_HOUR = 22;
+
 const PRODUCTS = [
   { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
   { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
@@ -210,7 +212,9 @@ const PRODUCTS = [
   { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
+
 const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
+
 const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', payment: 'Dinheiro', troco: '', currentLocation: '' };
 let isOpen = false;
 
@@ -307,6 +311,7 @@ byId('trocoInput').addEventListener('input', e=>{ state.troco=e.target.value; })
 function generatePix(){ byId('pixCode').value = `PIX Copie e cole para pagar: ${byId('total').textContent}`; }
 byId('copyPixBtn').addEventListener('click', ()=>{ byId('pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!'); });
 
+// ==== WhatsApp com localização ====
 byId('whatsappBtn').addEventListener('click', ()=>{
   let msg='*Novo Pedido:*\n';
   for(const [id,qty] of Object.entries(state.cart)){
@@ -314,21 +319,20 @@ byId('whatsappBtn').addEventListener('click', ()=>{
     msg += `${qty}x ${prod.name} - ${BRL.format(prod.price*qty)}\n`;
   }
   msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n`;
-  
   msg += `\n*Local:* ${state.location}`;
-  if(state.currentLocation) msg += `\n*Link da Localização: *(${state.currentLocation})`;
+  if(state.currentLocation) msg += `\n*Minha localização:* ${state.currentLocation}`;
   msg += `\n*Pagamento:* ${state.payment}\n`;
-
   window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
 });
 
 // ==== Horário de atendimento ====
 function checkOpenHours(){
   const now = new Date(); const hours = now.getHours();
-  isOpen = (hours>=11 && hours<22);
+  isOpen = (hours>=OPEN_HOUR && hours<CLOSE_HOUR);
   const badge = byId('openBadge');
   badge.textContent = isOpen?'Aberto':'Fechado';
   badge.className = 'badge '+(isOpen?'open':'closed');
+  byId('hoursText').textContent = `Horário: ${OPEN_HOUR}:00 às ${CLOSE_HOUR}:00`;
   document.getElementById('siteNotice').classList.toggle('hidden',isOpen);
 }
 setInterval(checkOpenHours,1000); checkOpenHours();
