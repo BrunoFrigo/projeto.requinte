@@ -92,8 +92,15 @@ header {
 .title { font-weight: 800; }
 .desc { color: var(--muted); font-size: 14px; min-height: 40px; }
 .price { font-weight: 800; }
-.qty { display:flex; align-items:center; gap:8px; }
+.qty { 
+  display:flex; 
+  align-items:center; 
+  justify-content:center;
+  gap:8px;
+}
 .step { background: none; border:1px solid rgba(18, 0, 71, 0.12); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
+
+.addBtn { background-color: var(--success); border:none; color:white; padding:6px 10px; border-radius:8px; font-weight:700; cursor:pointer; }
 
 .cart { position: sticky; top: 100px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
 .cart-title { font-size: 18px; font-weight: 800; display:flex; align-items:center; justify-content: space-between; }
@@ -151,7 +158,6 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
       <option value="Bairro Portal Do Sol">Bairro Portal Do Sol</option>
       <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
     </select>
-    <!-- Endereço removido -->
     <select id="paymentSelect" class="select">
       <option value="Dinheiro">Dinheiro</option>
       <option value="Pix">Pix</option>
@@ -205,7 +211,7 @@ const PRODUCTS = [
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
 const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
-const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', address: '', payment: 'Dinheiro', troco: '', currentLocation: '' };
+const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', payment: 'Dinheiro', troco: '', currentLocation: '' };
 let isOpen = false;
 
 // ==== Utilitários ====
@@ -241,6 +247,7 @@ function renderMenu() {
           <span id="qty-${p.id}">${state.cart[p.id]||0}</span>
           <button class="step" data-id="${p.id}" data-action="inc">+</button>
         </div>
+        <button class="addBtn" data-id="${p.id}">Adicionar</button>
       </div>
     `;
     if(p.badge){ const b=document.createElement('div'); b.className='badge-product'; b.textContent=p.badge; card.appendChild(b);}
@@ -278,14 +285,11 @@ function renderCart(){
 document.addEventListener('click', e=>{
   if(e.target.classList.contains('step')) updateCart(parseInt(e.target.dataset.id), e.target.dataset.action);
   if(e.target.classList.contains('remove')){ delete state.cart[parseInt(e.target.dataset.id)]; renderCart(); renderMenu(); }
+  if(e.target.classList.contains('addBtn')) updateCart(parseInt(e.target.dataset.id), 'inc');
 });
 
 byId('emptyBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); });
-byId('clearBtn').addEventListener('click', ()=>{
-  state.cart={}; renderCart(); renderMenu();
-  state.troco=''; byId('trocoInput').value='';
-  state.payment='Dinheiro'; byId('paymentSelect').value='Dinheiro';
-});
+byId('clearBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); state.troco=''; byId('trocoInput').value=''; state.payment='Dinheiro'; byId('paymentSelect').value='Dinheiro'; });
 
 byId('locationSelect').addEventListener('change', e=>{
   state.location = e.target.value; renderCart(); updateCurrentLocation();
@@ -310,11 +314,11 @@ byId('whatsappBtn').addEventListener('click', ()=>{
     msg += `${qty}x ${prod.name} - ${BRL.format(prod.price*qty)}\n`;
   }
   msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n`;
-  msg += `\n*Local:* ${state.location}\n`;
-  if(state.location !== 'RETIRADA' && state.currentLocation){
-    msg += `*Localização em tempo real:* ${state.currentLocation}\n`;
-  }
-  msg += `*Pagamento:* ${state.payment}\n`;
+  
+  msg += `\n*Local:* ${state.location}`;
+  if(state.currentLocation) msg += `\n*Link da Localização: *(${state.currentLocation})`;
+  msg += `\n*Pagamento:* ${state.payment}\n`;
+
   window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
 });
 
