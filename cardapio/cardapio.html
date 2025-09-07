@@ -1,338 +1,364 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cardápio • Requinte Bar e Cozinha</title>
-  <style>
-    :root {
-      --bg: #000000;
-      --panel: #14182b;
-      --panel-2: #1a1f36;
-      --accent: #000000;
-      --accent-2: #000000;
-      --text: #d8dceb;
-      --muted: #aab1c6;
-      --danger: #f56b6b;
-      --success: #34d399;
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 16px;
-    }
-    * { box-sizing: border-box; }
-    html, body { height: 100%; }
-    body {
-      margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-      background: radial-gradient(1200px 800px at 10% -10%, #1b2140 0%, var(--bg) 40%), var(--bg);
-      color: var(--text);
-    }
-    a { color: inherit; }
-    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
-    header {
-      position: sticky; top: 0; z-index: 50;
-      backdrop-filter: saturate(1.2) blur(10px);
-      background: linear-gradient(180deg, rgba(20,24,43,.9), rgba(20,24,43,.6));
-      border-bottom: 1px solid rgba(167,139,250,.18);
-    }
-    .nav {
-      display: grid; grid-template-columns: 1fr auto 480px; gap: 16px; align-items: center; padding: 16px 24px;
-    }
-    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing:.3px; }
-    .brand .logo { width: 80px; height: 60px; border-radius: 10px; display:grid;place-items:center; overflow:hidden; }
-    .brand .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Cardápio • Requinte Bar e Cozinha</title>
+<style>
+:root {
+  --bg: #000000;
+  --panel: #14182b;
+  --panel-2: #1a1f36;
+  --accent: #000000;
+  --accent-2: #35098d3f;
+  --text: #d8dceb;
+  --muted: #aab1c6;
+  --danger: #f56b6b;
+  --success: #34d399;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --radius: 16px;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
+  background: radial-gradient(1200px 800px at 10% -10%, #1b2140 0%, var(--bg) 40%), var(--bg);
+  color: var(--text);
+}
+a { color: inherit; }
+.container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+header {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: saturate(1.2) blur(10px);
+  background: linear-gradient(180deg, rgba(20,24,43,.9), rgba(20,24,43,.6));
+  border-bottom: 1px solid rgba(167,139,250,.18);
+}
+.nav {
+  display: grid; grid-template-columns: 1fr auto 480px; gap: 16px; align-items: center; padding: 16px 24px;
+}
+.brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing:.3px; }
+.brand .logo { width: 80px; height: 60px; border-radius: 10px; display:grid;place-items:center; overflow:hidden; }
+.brand .logo img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; }
 
-    .status { display: flex; align-items: center; gap: 10px; justify-content: center; }
-    .badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing:.3px; }
-    .badge.open { background: rgba(52,211,153,.15); color: var(--success); border:1px solid rgba(52,211,153,.35); }
-    .badge.closed { background: rgba(255,107,107,.15); color: var(--danger); border:1px solid rgba(255,107,107,.35); }
+.status { display: flex; align-items: center; gap: 10px; justify-content: center; }
+.badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing:.3px; }
+.badge.open { background: rgba(52,211,153,.15); color: var(--success); border:1px solid rgba(52,211,153,.35); }
+.badge.closed { background: rgba(255,107,107,.15); color: var(--danger); border:1px solid rgba(255,107,107,.35); }
 
-    .controls { display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
-    .select, .input {
-      background: var(--panel-2); color: var(--text); border:1px solid rgba(167,139,250,.15);
-      border-radius: 12px; padding: 10px 12px; outline: none; min-width: 160px;
-    }
-    .input[type="time"] { min-width: 120px; }
-    .btn {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer;
-      box-shadow: var(--shadow);
-    }
-    .btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.35); color: var(--text); box-shadow: none; }
-    .btn:disabled { opacity:.6; cursor:not-allowed; }
+.controls { display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
+.select, .input {
+  background: var(--panel-2); color: var(--text); border:1px solid rgba(167,139,250,.15);
+  border-radius: 12px; padding: 10px 12px; outline: none; min-width: 160px;
+}
+.btn {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer;
+  box-shadow: var(--shadow);
+}
+.btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.35); color: var(--text); box-shadow: none; }
+.btn:disabled { opacity:.6; cursor:not-allowed; }
 
-    .layout { display: grid; grid-template-columns: 1fr 370px; gap: 22px; padding: 24px; }
-    .panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
+.layout { display: grid; grid-template-columns: 1fr 370px; gap: 22px; padding: 24px; }
+.panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
 
-    .filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.12); flex-wrap: wrap; }
-    .chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; }
-    .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-color: transparent; }
+.filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.12); flex-wrap: wrap; }
+.chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; }
+.chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-color: transparent; }
 
-    .menu { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; padding: 16px; }
-    .card { background: var(--panel-2); border:1px solid rgba(167,139,250,.12); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; }
-    .thumb { height: 140px; background: #0f1326; display:grid; place-items:center; font-size: 32px; overflow:hidden; }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
-    .card-body { padding: 12px; display:flex; flex-direction:column; gap:8px; }
-    .title { font-weight: 800; }
-    .desc { color: var(--muted); font-size: 14px; min-height: 40px; }
-    .price { font-weight: 800; }
-    .qty { display:flex; align-items:center; gap:8px; }
-    .step { background: none; border:1px solid rgba(18, 0, 71, 0.35); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
+.menu { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; padding: 16px; }
+.card { background: var(--panel-2); border:1px solid rgba(167,139,250,.12); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; }
+.thumb { height: 140px; background: #0f1326; display:grid; place-items:center; font-size: 32px; overflow:hidden; }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.card-body { padding: 12px; display:flex; flex-direction:column; gap:8px; }
+.title { font-weight: 800; }
+.desc { color: var(--muted); font-size: 14px; min-height: 40px; }
+.price { font-weight: 800; }
+.qty { display:flex; align-items:center; gap:8px; }
+.step { background: none; border:1px solid rgba(18, 0, 71, 0.35); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
 
-    .cart { position: sticky; top: 100px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
-    .cart-title { font-size: 18px; font-weight: 800; display:flex; align-items:center; justify-content: space-between; }
-    .cart-list { display:flex; flex-direction:column; gap:10px; max-height: 50vh; overflow:auto; }
-    .cart-item { display:grid; grid-template-columns: 1fr auto auto; gap:8px; align-items:center; background: rgba(167,139,250,.06); padding:10px; border-radius:12px; }
-    .remove { background:none; border:none; color: var(--danger); cursor:pointer; font-weight:800; }
-    .totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.25); padding-top:10px; display:flex; flex-direction:column; gap:6px; }
+.cart { position: sticky; top: 100px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
+.cart-title { font-size: 18px; font-weight: 800; display:flex; align-items:center; justify-content: space-between; }
+.cart-list { display:flex; flex-direction:column; gap:10px; max-height: 50vh; overflow:auto; }
+.cart-item { display:grid; grid-template-columns: 1fr auto auto; gap:8px; align-items:center; background: rgba(167,139,250,.06); padding:10px; border-radius:12px; }
+.remove { background:none; border:none; color: var(--danger); cursor:pointer; font-weight:800; }
+.totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.25); padding-top:10px; display:flex; flex-direction:column; gap:6px; }
 
-    .footer-note { color: var(--muted); font-size: 13px; }
+.footer-note { color: var(--muted); font-size: 13px; }
 
-    #pixCode { width: 100%; border-radius: 12px; padding: 8px; background: var(--panel-2); border:1px solid rgba(167,139,250,.15); color: var(--text); resize:none; height: 60px; }
-    
-    @media (max-width: 980px) { .nav { grid-template-columns: 1fr; gap: 10px; } .layout { grid-template-columns: 1fr; } .cart { position: static; } }
-  </style>
+#pixCode { width: 100%; border-radius: 12px; padding: 8px; background: var(--panel-2); border:1px solid rgba(167,139,250,.15); color: var(--text); resize:none; height: 60px; }
+
+#whatsappBtn { background-color:#25D366; border:none; color:white; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); margin-top:8px; }
+
+@media (max-width: 980px) { .nav { grid-template-columns: 1fr; gap: 10px; } .layout { grid-template-columns: 1fr; } .cart { position: static; } }
+</style>
 </head>
 <body>
-  <header>
-    <div class="nav">
-      <div class="brand">
-        <div class="logo">
-          <img src="requintelogo.png.jpeg" alt="Requinte Bar e Cozinha" />
-        </div>
-        <div>
-          <div style="font-size:19px; line-height:1;">Requinte Bar e Cozinha</div>
-          <small style="color:var(--muted)">Cardápio online</small>
-        </div>
-      </div>
-      <div class="status">
-        <span id="openBadge" class="badge">Carregando…</span>
-        <span id="hoursText" class="footer-note"></span>
-      </div>
-      <div class="controls">
-        <select id="locationSelect" class="select">
-          <option value="RETIRADA">Retirada no balcão</option>
-          <option value="Bairro Santa Inês">Bairro Santa Inês</option>
-          <option value="Centro">Centro</option>
-          <option value="Bairro Cristo Rei">Bairro Cristo Rei</option>
-          <option value="Bairro Portal Do Sol">Bairro Portal Do Sol</option>
-          <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
-        </select>
-        <input id="addressInput" class="input" placeholder="Endereço (de entrega)" />
-        <input id="timeInput" type="time" class="input" />
-        <select id="paymentSelect" class="select">
-          <option value="Dinheiro">Dinheiro</option>
-          <option value="Pix">Pix</option>
-          <option value="Cartão">Cartão</option>
-        </select>
-        <input id="trocoInput" class="input" placeholder="Troco para quanto?" style="display:none;" />
-        <textarea id="pixCode" readonly placeholder="Código Pix" style="display:none;"></textarea>
-        <button id="copyPixBtn" class="btn secondary" style="display:none;margin-top:4px;">Copiar Pix</button>
-        <button id="clearBtn" class="btn secondary">Limpar</button>
-      </div>
+<header>
+<div class="nav">
+  <div class="brand">
+    <div class="logo">
+      <img src="requintelogo.png.jpeg" alt="Requinte Bar e Cozinha" />
     </div>
-  </header>
-
-  <main class="container">
-    <div class="layout">
-      <section class="panel">
-        <div class="filters" id="filters"></div>
-        <div class="menu" id="menu"></div>
-      </section>
-      <aside class="panel cart">
-        <div class="cart-title">
-          <span>Carrinho</span>
-          <button id="emptyBtn" class="btn secondary" style="padding:6px 10px">Esvaziar</button>
-        </div>
-        <div class="cart-list" id="cartList"></div>
-        <div class="totals">
-          <div style="display:flex; justify-content:space-between"><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
-          <div style="display:flex; justify-content:space-between"><span>Entrega</span><strong id="delivery">R$ 0,00</strong></div>
-          <div style="display:flex; justify-content:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
-          <button id="checkoutBtn" class="btn">Finalizar pedido</button>
-          <small class="footer-note">Pedidos só podem ser finalizados dentro do horário de atendimento.</small>
-        </div>
-      </aside>
+    <div>
+      <div style="font-size:19px; line-height:1;">Requinte Bar e Cozinha</div>
+      <small style="color:var(--muted)">Cardápio online</small>
     </div>
-  </main>
+  </div>
+  <div class="status">
+    <span id="openBadge" class="badge">Carregando…</span>
+    <span id="hoursText" class="footer-note"></span>
+  </div>
+  <div class="controls">
+    <select id="locationSelect" class="select">
+      <option value="RETIRADA">Retirada no balcão</option>
+      <option value="Bairro Santa Inês">Bairro Santa Inês</option>
+      <option value="Centro">Centro</option>
+      <option value="Bairro Cristo Rei">Bairro Cristo Rei</option>
+      <option value="Bairro Portal Do Sol">Bairro Portal Do Sol</option>
+      <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
+    </select>
+    <input id="addressInput" class="input" placeholder="Endereço (de entrega)" />
+    <select id="paymentSelect" class="select">
+      <option value="Dinheiro">Dinheiro</option>
+      <option value="Pix">Pix</option>
+      <option value="Cartão">Cartão</option>
+    </select>
+    <input id="trocoInput" class="input" placeholder="Troco para quanto?" style="display:none;" />
+    <textarea id="pixCode" readonly placeholder="Código Pix" style="display:none;"></textarea>
+    <button id="copyPixBtn" class="btn secondary" style="display:none;margin-top:4px;">Copiar Pix</button>
+    <button id="clearBtn" class="btn secondary">Limpar</button>
+  </div>
+</div>
+</header>
 
-  <script>
-  const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+<main class="container">
+<div class="layout">
+  <section class="panel">
+    <div class="filters" id="filters"></div>
+    <div class="menu" id="menu"></div>
+  </section>
+  <aside class="panel cart">
+    <div class="cart-title">
+      <span>Carrinho</span>
+      <button id="emptyBtn" class="btn secondary" style="padding:6px 10px">Esvaziar</button>
+    </div>
+    <div class="cart-list" id="cartList"></div>
+    <div class="totals">
+      <div style="display:flex; justify-content:space-between"><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
+      <div style="display:flex; justify-content:space-between"><span>Entrega</span><strong id="delivery">R$ 0,00</strong></div>
+      <div style="display:flex; justify-content:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
+      <button id="whatsappBtn" disabled>Enviar para WhatsApp</button>
+      <small class="footer-note">Pedidos só podem ser finalizados dentro do horário de atendimento.</small>
+    </div>
+  </aside>
+</div>
+</main>
 
-  const PRODUCTS = [
-    { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg' },
-    { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
-    { id: 3, name: 'Porção Peixe + Fritas', price: 60.5, category: 'Porções', desc: '500g de filé de tilápia, 500g de batata frita', img: 'https://img.freepik.com/fotos-premium/isca-de-peixe-com-batatas-fritas_538646-12784.jpg' },
-    { id: 4, name: 'Batata Crinkle', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
-    { id: 5, name: 'Onion Rings', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://st3.depositphotos.com/1764206/32933/i/450/depositphotos_329339034-stock-photo-homemade-crunchy-fried-onion-rings.jpg' },
-    { id: 6, name: 'Refrigerante Lata', price: 6.5, category: 'Bebidas', desc: '350 ml', img: 'https://s3-sa-east-1.amazonaws.com/deliveryon-uploads/products/sabordabarrafit/36_62b09af6e68a8.png' },
-    { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
-    { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
-  ];
+<script>
+const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
-  const DELIVERY_FEES = {
-    "RETIRADA": 0,
-    "Bairro Santa Inês": 6,
-    "Centro": 5,
-    "Bairro Cristo Rei": 7,
-    "Bairro Portal Do Sol": 8,
-    "Bairro Três Pinheiros": 7,
-  };
+const PRODUCTS = [
+  { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg' },
+  { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
+  { id: 3, name: 'Porção Peixe + Fritas', price: 60.5, category: 'Porções', desc: '500g de filé de tilápia, 500g de batata frita', img: 'https://img.freepik.com/fotos-premium/isca-de-peixe-com-batatas-fritas_538646-12784.jpg' },
+  { id: 4, name: 'Batata Crinkle', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
+  { id: 5, name: 'Onion Rings', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://st3.depositphotos.com/1764206/32933/i/450/depositphotos_329339034-stock-photo-homemade-crunchy-fried-onion-rings.jpg' },
+  { id: 6, name: 'Refrigerante Lata', price: 6.5, category: 'Bebidas', desc: '350 ml', img: 'https://s3-sa-east-1.amazonaws.com/deliveryon-uploads/products/sabordabarrafit/36_62b09af6e68a8.png' },
+  { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
+  { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
+];
 
-  const state = {
-    filter: 'Todos',
-    cart: JSON.parse(localStorage.getItem('cart') || '{}'),
-    location: localStorage.getItem('location') || 'RETIRADA',
-    address: localStorage.getItem('address') || '',
-    time: localStorage.getItem('time') || '',
-    payment: localStorage.getItem('payment') || 'Dinheiro',
-    troco: localStorage.getItem('troco') || '',
-  };
+const DELIVERY_FEES = {
+  "RETIRADA": 0,
+  "Bairro Santa Inês": 6,
+  "Centro": 5,
+  "Bairro Cristo Rei": 7,
+  "Bairro Portal Do Sol": 8,
+  "Bairro Três Pinheiros": 7,
+};
 
-  const qs = (s, el = document) => el.querySelector(s);
-  const qsa = (s, el = document) => [...el.querySelectorAll(s)];
-  const byId = (id) => PRODUCTS.find(p => p.id === id);
-  const money = (n) => BRL.format(n);
+const state = {
+  filter: 'Todos',
+  cart: {},
+  location: 'RETIRADA',
+  address: '',
+  payment: 'Dinheiro',
+  troco: '',
+};
 
-  function saveState() {
-    localStorage.setItem('cart', JSON.stringify(state.cart));
-    localStorage.setItem('location', state.location);
-    localStorage.setItem('address', state.address);
-    localStorage.setItem('time', state.time);
-    localStorage.setItem('payment', state.payment);
-    localStorage.setItem('troco', state.troco);
-  }
+const qs = (s, el=document) => el.querySelector(s);
+const qsa = (s, el=document) => [...el.querySelectorAll(s)];
+const byId = (id) => PRODUCTS.find(p => p.id === id);
+const money = (n) => BRL.format(n);
 
-  function renderFilters() {
-    const categories = ['Todos', ...new Set(PRODUCTS.map(p => p.category))];
-    qs('#filters').innerHTML = categories.map(cat => 
-      `<button class="chip${state.filter === cat ? ' active' : ''}" data-cat="${cat}">${cat}</button>`
-    ).join('');
-    qsa('.chip').forEach(b => b.onclick = () => {
+function renderFilters() {
+  const categories = ['Todos', ...new Set(PRODUCTS.map(p=>p.category))];
+  qs('#filters').innerHTML = categories.map(cat => 
+    `<button class="chip${state.filter===cat?' active':''}" data-cat="${cat}">${cat}</button>`
+  ).join('');
+  qsa('.chip').forEach(b=>{
+    b.onclick = () => {
       state.filter = b.dataset.cat; renderMenu();
-      qsa('.chip').forEach(c => c.classList.remove('active'));
+      qsa('.chip').forEach(c=>c.classList.remove('active'));
       b.classList.add('active');
-    });
-  }
+    };
+  });
+}
 
-  function renderMenu() {
-    const list = state.filter === 'Todos' ? PRODUCTS : PRODUCTS.filter(p => p.category === state.filter);
-    const el = qs('#menu');
-    el.innerHTML = '';
-    list.forEach(p => {
-      const card = document.createElement('article');
-      card.className = 'card';
-      card.innerHTML = `
-        <div class="thumb"><img src="${p.img}" alt="${p.name}" /></div>
-        <div class="card-body">
-          <div class="title">${p.name}</div>
-          <div class="desc">${p.desc}</div>
-          <div style="display:flex; align-items:center; justify-content:space-between;">
-            <div class="price">${money(p.price)}</div>
-            <div class="qty">
-              <button class="step" data-step="-1">−</button>
-              <input type="number" min="0" value="${state.cart[p.id] || 0}" style="width:48px; text-align:center;" />
-              <button class="step" data-step="1">+</button>
-            </div>
+function renderMenu() {
+  const list = state.filter==='Todos' ? PRODUCTS : PRODUCTS.filter(p=>p.category===state.filter);
+  const el = qs('#menu'); el.innerHTML='';
+  list.forEach(p=>{
+    const card = document.createElement('article');
+    card.className='card';
+    card.innerHTML=`
+      <div class="thumb"><img src="${p.img}" alt="${p.name}"/></div>
+      <div class="card-body">
+        <div class="title">${p.name}</div>
+        <div class="desc">${p.desc}</div>
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="price">${money(p.price)}</div>
+          <div class="qty">
+            <button class="step" data-step="-1">−</button>
+            <input type="number" min="0" value="${state.cart[p.id]||0}" style="width:48px; text-align:center;" />
+            <button class="step" data-step="1">+</button>
           </div>
-          <button class="btn" style="margin-top:8px">Adicionar</button>
         </div>
-      `;
-      el.appendChild(card);
-      const input = card.querySelector('input');
-      const update = () => { 
-        const qty = Math.max(0, parseInt(input.value) || 0);
-        if (qty === 0) delete state.cart[p.id]; else state.cart[p.id] = qty;
-        saveState(); renderCart();
-      };
-      card.querySelectorAll('.step').forEach(btn => {
-        btn.onclick = () => { input.value = (parseInt(input.value)||0) + Number(btn.dataset.step); update(); };
-      });
-      card.querySelector('.btn').onclick = () => { input.value = (parseInt(input.value)||0)+1; update(); };
-      input.onchange = update;
+        <button class="btn" style="margin-top:8px">Adicionar</button>
+      </div>
+    `;
+    el.appendChild(card);
+    const input = card.querySelector('input');
+    const update = () => {
+      let qty = Math.max(0, parseInt(input.value)||0);
+      input.value = qty;
+      if(qty===0) delete state.cart[p.id]; else state.cart[p.id]=qty;
+      renderCart();
+    };
+    card.querySelectorAll('.step').forEach(btn=>btn.onclick=()=>{
+      input.value = Math.max(0,(parseInt(input.value)||0)+Number(btn.dataset.step));
+      update();
     });
+    card.querySelector('.btn').onclick=()=>{ input.value=(parseInt(input.value)||0)+1; update(); };
+    input.onchange=update;
+  });
+}
+
+function renderCart() {
+  const list = qs('#cartList'); list.innerHTML='';
+  let subtotal=0;
+  for(const id in state.cart){
+    const p = byId(Number(id));
+    const qty = state.cart[id];
+    subtotal += p.price*qty;
+    const item = document.createElement('div');
+    item.className='cart-item';
+    item.innerHTML=`
+      <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
+      <div>${money(p.price*qty)}</div>
+      <button class="remove">×</button>
+    `;
+    item.querySelector('.remove').onclick=()=>{ delete state.cart[id]; renderCart(); };
+    list.appendChild(item);
+  }
+  qs('#subtotal').textContent = money(subtotal);
+  const fee = DELIVERY_FEES[state.location]||0;
+  qs('#delivery').textContent = money(fee);
+  const total = subtotal+fee;
+  qs('#total').textContent = money(total);
+  qs('#whatsappBtn').disabled = Object.keys(state.cart).length===0;
+
+  if(state.payment==='Pix') updatePixCode();
+}
+
+function updatePixCode(){
+  const fee = DELIVERY_FEES[state.location]||0;
+  let subtotal=0;
+  for(const id in state.cart) subtotal += byId(Number(id)).price*state.cart[id];
+  const total=(subtotal+fee).toFixed(2);
+  const pixKey = "11999999999";
+  const pixPayload = `00020126360014BR.GOV.BCB.PIX0114${pixKey}520400005303986540${total}5802BR5925Requinte Bar e Cozinha6009SaoPaulo62070503***6304ABCD`;
+  qs('#pixCode').value = pixPayload;
+}
+
+function updatePaymentUI(){
+  qs('#trocoInput').style.display = state.payment==='Dinheiro'?'block':'none';
+  qs('#pixCode').style.display = state.payment==='Pix'?'block':'none';
+  qs('#copyPixBtn').style.display = state.payment==='Pix'?'block':'none';
+  if(state.payment==='Pix') updatePixCode();
+}
+
+qs('#locationSelect').onchange = e => { state.location=e.target.value; renderCart(); };
+qs('#addressInput').oninput = e => { state.address=e.target.value; };
+qs('#paymentSelect').onchange = e => { state.payment=e.target.value; updatePaymentUI(); };
+qs('#trocoInput').oninput = e => { state.troco=e.target.value; };
+qs('#clearBtn').onclick = () => { location.reload(); };
+qs('#emptyBtn').onclick = () => { state.cart={}; renderCart(); };
+
+qs('#copyPixBtn').onclick = ()=>{
+  qs('#pixCode').select();
+  document.execCommand('copy');
+  alert('Código Pix copiado!');
+};
+
+// Função de envio para WhatsApp com espaçamentos e local/endereço
+qs('#whatsappBtn').onclick = () => {
+  if(Object.keys(state.cart).length === 0){ 
+    alert('O carrinho está vazio!'); 
+    return; 
+  }
+  if(state.location !== 'RETIRADA' && !state.address){ 
+    alert('Informe o endereço!'); 
+    return; 
   }
 
-  function renderCart() {
-    const list = qs('#cartList');
-    list.innerHTML = '';
-    let subtotal = 0;
-    for (const id in state.cart) {
-      const p = byId(Number(id));
-      const qty = state.cart[id];
-      subtotal += p.price * qty;
-      const item = document.createElement('div');
-      item.className = 'cart-item';
-      item.innerHTML = `
-        <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
-        <div>${money(p.price * qty)}</div>
-        <button class="remove">×</button>
-      `;
-      item.querySelector('.remove').onclick = () => { delete state.cart[id]; saveState(); renderCart(); };
-      list.appendChild(item);
-    }
-    qs('#subtotal').textContent = money(subtotal);
-    const fee = DELIVERY_FEES[state.location] || 0;
-    qs('#delivery').textContent = money(fee);
-    const total = subtotal + fee;
-    qs('#total').textContent = money(total);
+  const fee = DELIVERY_FEES[state.location] || 0;
+  let subtotal = 0;
+  let msg = 'Pedido do Cardápio:%0A';
+
+  for(const id in state.cart){
+    const p = byId(Number(id));
+    const qty = state.cart[id];
+    subtotal += p.price * qty;
+    msg += `${qty}x ${p.name} - ${money(p.price * qty)}%0A`;
   }
 
-  function updatePixCode() {
-    if (state.payment !== 'Pix') return;
-    const fee = DELIVERY_FEES[state.location] || 0;
-    let subtotal = 0;
-    for (const id in state.cart) {
-      const p = byId(Number(id));
-      subtotal += p.price * state.cart[id];
-    }
-    const total = subtotal + fee;
-    const pixKey = "11999999999"; // <-- sua chave Pix aqui
-    const pixPayload = `00020126360014BR.GOV.BCB.PIX0114${pixKey}520400005303986540${total.toFixed(2)}5802BR5925Requinte Bar e Cozinha6009SaoPaulo62070503***6304ABCD`;
-    qs('#pixCode').value = pixPayload;
-  }
+  msg += '%0A'; // Espaçamento antes do subtotal
 
-  function updatePaymentUI() {
-    qs('#trocoInput').style.display = state.payment === 'Dinheiro' ? 'block' : 'none';
-    qs('#pixCode').style.display = state.payment === 'Pix' ? 'block' : 'none';
-    qs('#copyPixBtn').style.display = state.payment === 'Pix' ? 'block' : 'none';
-    if (state.payment === 'Pix') updatePixCode();
-  }
+  msg += `Subtotal: ${money(subtotal)}%0A`;
+  msg += `Entrega: ${money(fee)}%0A`;
+  msg += `Total: ${money(subtotal + fee)}%0A`;
 
-  // Eventos
-  qs('#locationSelect').onchange = e => { state.location = e.target.value; saveState(); renderCart(); };
-  qs('#addressInput').oninput = e => { state.address = e.target.value; saveState(); };
-  qs('#timeInput').oninput = e => { state.time = e.target.value; saveState(); };
-  qs('#paymentSelect').onchange = e => { state.payment = e.target.value; saveState(); updatePaymentUI(); };
-  qs('#trocoInput').oninput = e => { state.troco = e.target.value; saveState(); };
-  qs('#clearBtn').onclick = () => { localStorage.clear(); location.reload(); };
-  qs('#emptyBtn').onclick = () => { state.cart = {}; saveState(); renderCart(); };
-  qs('#copyPixBtn').onclick = () => {
-    qs('#pixCode').select();
-    document.execCommand('copy');
-    alert('Código Pix copiado!');
-  };
+  msg += '%0A'; // Espaçamento antes do endereço/pagamento
 
-  // Status de funcionamento
-  function checkHours() {
-    const now = new Date();
-    const hour = now.getHours();
-    const open = hour >= 18 && hour < 23;
-    const badge = qs('#openBadge');
-    if (open) { badge.textContent = 'Aberto'; badge.className = 'badge open'; }
-    else { badge.textContent = 'Fechado'; badge.className = 'badge closed'; }
-    qs('#hoursText').textContent = 'Atendimento: 18h - 23h';
-  }
+  msg += `Local: ${state.location}%0A`;
+  if(state.location !== 'RETIRADA') msg += `Endereço: ${state.address}%0A`;
 
-  // Inicialização
-  renderFilters();
-  renderMenu();
-  renderCart();
-  checkHours();
-  qs('#locationSelect').value = state.location;
-  qs('#addressInput').value = state.address;
-  qs('#timeInput').value = state.time;
-  qs('#paymentSelect').value = state.payment;
-  qs('#trocoInput').value = state.troco;
-  updatePaymentUI();
-  </script>
+  msg += `Pagamento: ${state.payment}`;
+  if(state.payment === 'Dinheiro' && state.troco) msg += `%0A Troco para: R$ ${state.troco}`;
+
+  window.open(`https://wa.me/5549991853548?text=${msg}`, '_blank');
+};
+
+function checkHours(){
+  const now = new Date();
+  const hour = now.getHours();
+  const open = hour>=18 && hour<23;
+  const badge = qs('#openBadge');
+  if(open){ badge.textContent='Aberto'; badge.className='badge open'; }
+  else { badge.textContent='Fechado'; badge.className='badge closed'; }
+  qs('#hoursText').textContent='Atendimento: 18h - 23h';
+}
+
+renderFilters();
+renderMenu();
+renderCart();
+checkHours();
+qs('#locationSelect').value=state.location;
+qs('#addressInput').value=state.address;
+qs('#paymentSelect').value=state.payment;
+qs('#trocoInput').value=state.troco;
+updatePaymentUI();
+</script>
 </body>
 </html>
