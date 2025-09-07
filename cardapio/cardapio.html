@@ -21,19 +21,36 @@
 * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
-  margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
-  background: radial-gradient(1200px 800px at 10% -10%, #1b2140 0%, var(--bg) 40%), var(--bg);
+  margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
   color: var(--text);
-  background-image: url('https://www.transparenttextures.com/patterns/food.png');
+  background: var(--bg);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+/* Fundo de madeira rústica desfocado */
+body::before{
+  content: '';
+  position: fixed; inset: 0; z-index: -2;
+  background-image: url('https://images.unsplash.com/photo-1506629082955-511b1e0d0b8d?auto=format&fit=crop&w=1600&q=80');
+  background-size: cover; background-position: center;
+  filter: blur(6px) saturate(0.8) contrast(.95);
+  transform: scale(1.02);
+}
+/* camada escura para contraste */
+body::after{
+  content: '';
+  position: fixed; inset: 0; z-index: -1;
+  background: linear-gradient(180deg, rgba(2,6,23,0.6) 0%, rgba(2,6,23,0.8) 100%);
 }
 
 a { color: inherit; }
 .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 header {
-  position: sticky; top: 0; z-index: 50;
-  backdrop-filter: saturate(1.2) blur(10px);
-  background: linear-gradient(180deg, rgba(20,24,43,.9), rgba(20,24,43,.6));
-  border-bottom: 1px solid rgba(167,139,250,.18);
+  position: sticky; top: 0; z-index: 60;
+  backdrop-filter: saturate(1.2) blur(8px);
+  background: linear-gradient(180deg, rgba(20,24,43,.85), rgba(20,24,43,.6));
+  border-bottom: 1px solid rgba(167,139,250,.12);
 }
 .nav {
   display: grid; grid-template-columns: 1fr auto 480px; gap: 16px; align-items: center; padding: 16px 24px;
@@ -44,33 +61,33 @@ header {
 
 .status { display: flex; align-items: center; gap: 10px; justify-content: center; }
 .badge { padding: 6px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing:.3px; }
-.badge.open { background: rgba(52,211,153,.15); color: var(--success); border:1px solid rgba(52,211,153,.35); }
-.badge.closed { background: rgba(255,107,107,.15); color: var(--danger); border:1px solid rgba(255,107,107,.35); }
+.badge.open { background: rgba(52,211,153,.12); color: var(--success); border:1px solid rgba(52,211,153,.25); }
+.badge.closed { background: rgba(255,107,107,.12); color: var(--danger); border:1px solid rgba(255,107,107,.18); }
 
 .controls { display: flex; gap: 10px; align-items: center; justify-content: flex-end; flex-wrap: wrap; }
 .select, .input {
-  background: var(--panel-2); color: var(--text); border:1px solid rgba(167,139,250,.15);
+  background: var(--panel-2); color: var(--text); border:1px solid rgba(167,139,250,.12);
   border-radius: 12px; padding: 10px 12px; outline: none; min-width: 160px;
 }
 .btn {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer;
-  box-shadow: var(--shadow); transition: all 0.2s;
+  box-shadow: var(--shadow); transition: all 0.18s;
 }
 .btn:hover { transform: scale(1.03); }
-.btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.35); color: var(--text); box-shadow: none; }
+.btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.22); color: var(--text); box-shadow: none; }
 .btn:disabled { opacity:.6; cursor:not-allowed; }
 
 .layout { display: grid; grid-template-columns: 1fr 370px; gap: 22px; padding: 24px; }
-.panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
+.panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.6)); border:1px solid rgba(167,139,250,.08); border-radius: var(--radius); box-shadow: var(--shadow); }
 
-.filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.12); flex-wrap: wrap; }
-.chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; transition: all 0.2s; }
+.filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.08); flex-wrap: wrap; }
+.chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.08); border:1px solid rgba(167,139,250,.06); cursor:pointer; font-weight:600; transition: all 0.16s; }
 .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-color: transparent; }
 
 .menu { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; padding: 16px; }
-.card { background: var(--panel-2); border:1px solid rgba(167,139,250,.12); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; position: relative; animation: fadeIn 0.4s ease forwards; }
-.card:hover { transform: scale(1.05); box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: all 0.2s ease-in-out; }
+.card { background: var(--panel-2); border:1px solid rgba(167,139,250,.06); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; position: relative; animation: fadeIn 0.4s ease forwards; }
+.card:hover { transform: scale(1.03); box-shadow: 0 15px 35px rgba(0,0,0,0.45); transition: all 0.18s ease-in-out; }
 .thumb { height: 140px; background: #0f1326; display:grid; place-items:center; font-size: 32px; overflow:hidden; cursor: pointer; }
 .thumb img { width:100%; height:100%; object-fit:cover; display:block; transition: all 0.3s; }
 .card-body { padding: 12px; display:flex; flex-direction:column; gap:8px; }
@@ -78,39 +95,38 @@ header {
 .desc { color: var(--muted); font-size: 14px; min-height: 40px; }
 .price { font-weight: 800; }
 .qty { display:flex; align-items:center; gap:8px; }
-.step { background: none; border:1px solid rgba(18, 0, 71, 0.35); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
+.step { background: none; border:1px solid rgba(18, 0, 71, 0.12); color: var(--text); width:28px; height:28px; border-radius: 8px; font-weight:900; display:grid; place-items:center; cursor:pointer; }
 
 .cart { position: sticky; top: 100px; padding: 16px; display:flex; flex-direction:column; gap:12px; }
 .cart-title { font-size: 18px; font-weight: 800; display:flex; align-items:center; justify-content: space-between; }
 .cart-list { display:flex; flex-direction:column; gap:10px; max-height: 50vh; overflow:auto; }
-.cart-item { display:grid; grid-template-columns: 1fr auto auto; gap:8px; align-items:center; background: rgba(167,139,250,.06); padding:10px; border-radius:12px; }
+.cart-item { display:grid; grid-template-columns: 1fr auto auto; gap:8px; align-items:center; background: rgba(167,139,250,.04); padding:10px; border-radius:12px; }
 .remove { background:none; border:none; color: var(--danger); cursor:pointer; font-weight:800; }
-.totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.25); padding-top:10px; display:flex; flex-direction:column; gap:12px; }
+.totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.12); padding-top:10px; display:flex; flex-direction:column; gap:12px; }
 
 .footer-note { color: var(--muted); font-size: 13px; }
 
-#pixCode { width: 100%; border-radius: 12px; padding: 8px; background: var(--panel-2); border:1px solid rgba(167,139,250,.15); color: var(--text); resize:none; height: 60px; }
+#pixCode { width: 100%; border-radius: 12px; padding: 8px; background: var(--panel-2); border:1px solid rgba(167,139,250,.08); color: var(--text); resize:none; height: 60px; }
 
 #whatsappBtn { background-color:#25D366; border:none; color:white; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); margin-top:8px; }
 
+/* aviso do site (fora do carrinho) */
+.site-notice { display:flex; align-items:center; justify-content:space-between; gap:12px; padding:10px 16px; border-radius:10px; margin: 8px 24px; }
+.site-notice.info{ background: linear-gradient(90deg, rgba(124,58,237,0.08), rgba(52,211,153,0.06)); border:1px solid rgba(167,139,250,0.06); color: var(--text); }
+.site-notice.hidden{ display:none; }
+
 /* 🔹 Botão desabilitado */
-button:disabled {
-  background-color: #888 !important;
-  cursor: not-allowed !important;
-  opacity: 0.7;
-}
+button:disabled { background-color: #888 !important; cursor: not-allowed !important; opacity: 0.7; }
 
 .badge-product { position: absolute; top: 10px; left: 10px; background: #ff5722; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
 
-@keyframes fadeIn {
-  0% {opacity:0; transform: translateY(20px);}
-  100% {opacity:1; transform: translateY(0);}
-}
+@keyframes fadeIn { 0% {opacity:0; transform: translateY(20px);} 100% {opacity:1; transform: translateY(0);} }
 
 @media (max-width: 980px) { 
   .nav { grid-template-columns: 1fr; gap: 10px; } 
   .layout { grid-template-columns: 1fr; } 
-  .cart { position: fixed; bottom: 0; left: 0; right:0; max-height: 50%; z-index: 60; border-radius: 16px 16px 0 0; overflow:auto; }
+  .cart { position: fixed; bottom: 0; left: 0; right:0; max-height: 60%; z-index: 80; border-radius: 16px 16px 0 0; overflow:auto; }
+  .site-notice{ margin:8px 12px; }
 }
 </style>
 </head>
@@ -151,6 +167,11 @@ button:disabled {
     <button id="clearBtn" class="btn secondary">Limpar</button>
   </div>
 </div>
+<!-- aviso do site (fora do carrinho) -->
+<div id="siteNotice" class="site-notice info hidden" aria-live="polite">
+  <div id="siteNoticeText">Pedidos só podem ser finalizados dentro do horário de atendimento.</div>
+  <div style="font-weight:700; color:var(--muted)" id="siteNoticeHours"></div>
+</div>
 </header>
 
 <main class="container">
@@ -170,7 +191,7 @@ button:disabled {
       <div style="display:flex; justify-content:space-between"><span>Entrega</span><strong id="delivery">R$ 0,00</strong></div>
       <div style="display:flex; justify-content:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
       <button id="whatsappBtn" disabled>Enviar para WhatsApp</button>
-      <small class="footer-note">Pedidos só podem ser finalizados dentro do horário de atendimento.</small>
+      <!-- aviso removido do carrinho conforme solicitado -->
     </div>
   </aside>
 </div>
@@ -178,8 +199,6 @@ button:disabled {
 
 <script>
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
-<!-- O RESTO DO SEU SCRIPT PERMANECE IGUAL -->
-
 
 const PRODUCTS = [
   { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
@@ -194,6 +213,7 @@ const PRODUCTS = [
 
 const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
 const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', address: '', payment: 'Dinheiro', troco: '' };
+let isOpen = false; // controla se está no horário de atendimento
 
 const qs = (s, el=document) => el.querySelector(s);
 const qsa = (s, el=document) => [...el.querySelectorAll(s)];
@@ -239,6 +259,12 @@ function renderMenu() {
   });
 }
 
+function updateWhatsAppButtonState(){
+  const btn = qs('#whatsappBtn');
+  const empty = Object.keys(state.cart).length===0;
+  btn.disabled = empty || !isOpen;
+}
+
 function renderCart() {
   const list = qs('#cartList'); list.innerHTML='';
   let subtotal=0;
@@ -250,7 +276,7 @@ function renderCart() {
     item.innerHTML=`
       <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
       <div>${money(p.price*qty)}</div>
-      <button class="remove">×</button>
+      <button class="remove" aria-label="Remover item">×</button>
     `;
     item.querySelector('.remove').onclick=()=>{ delete state.cart[id]; renderCart(); };
     list.appendChild(item);
@@ -260,7 +286,8 @@ function renderCart() {
   qs('#delivery').textContent = money(fee);
   const total = subtotal+fee;
   qs('#total').textContent = money(total);
-  qs('#whatsappBtn').disabled = Object.keys(state.cart).length===0;
+
+  updateWhatsAppButtonState();
 
   if(state.payment==='Pix') updatePixCode();
 }
@@ -271,6 +298,7 @@ function updatePixCode(){
   for(const id in state.cart) subtotal += byId(Number(id)).price*state.cart[id];
   const total=(subtotal+fee).toFixed(2);
   const pixKey = "11999999999";
+  // Exemplo simplificado de payload Pix (não é payload de cobrança real)
   const pixPayload = `00020126360014BR.GOV.BCB.PIX0114${pixKey}520400005303986540${total}5802BR5925Requinte Bar e Cozinha6009SaoPaulo62070503***6304ABCD`;
   qs('#pixCode').value = pixPayload;
 }
@@ -289,68 +317,93 @@ qs('#trocoInput').oninput = e => { state.troco=e.target.value; };
 qs('#clearBtn').onclick = () => { location.reload(); };
 qs('#emptyBtn').onclick = () => { state.cart={}; renderCart(); };
 
-qs('#copyPixBtn').onclick = ()=>{ qs('#pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!'); };
+qs('#copyPixBtn').onclick = async ()=>{ 
+  const text = qs('#pixCode').value || '';
+  try{
+    if(navigator.clipboard && navigator.clipboard.writeText) await navigator.clipboard.writeText(text);
+    else { qs('#pixCode').select(); document.execCommand('copy'); }
+    alert('Código Pix copiado!');
+  }catch(e){ alert('Não foi possível copiar o Pix.'); }
+};
 
-// Função atualizada com espaçamentos
+// Envio para WhatsApp — com verificação de horário, endereço e dispositivo
 qs('#whatsappBtn').onclick = ()=> {
-  // Bloqueia se estiver fechado
-  if (qs('#status').textContent.includes('Fechado')) {
-    alert('Estamos fechados no momento! Não é possível enviar pedidos.');
-    return;
-  }
-
+  if(!isOpen){ alert('Estamos fechados no momento! Não é possível enviar pedidos.'); return; }
   if(Object.keys(state.cart).length===0){ alert('O carrinho está vazio!'); return; }
   if(state.location!=='RETIRADA' && !state.address){ alert('Informe o endereço!'); return; }
 
   const fee = DELIVERY_FEES[state.location]||0;
   let subtotal=0;
-  let msg='Pedido do Cardápio:%0A%0A'; 
+  let lines = [];
+  lines.push('Pedido do Cardápio:');
 
   for(const id in state.cart){
     const p = byId(Number(id));
     const qty = state.cart[id];
     subtotal += p.price*qty;
-    msg += `${qty}x ${p.name} - ${money(p.price*qty)}%0A`;
+    lines.push(`${qty}x ${p.name} - ${money(p.price*qty)}`);
   }
 
-  msg += `%0A`;
-  msg += `Subtotal: ${money(subtotal)}%0A`;
-  msg += `Entrega: ${money(fee)}%0A`;
-
-  msg += `%0A`;
-  msg += `Total: ${money(subtotal+fee)}%0A`;
-
-  msg += `%0A`;
-  msg += `Pagamento: ${state.payment}`;
-  if(state.payment==='Dinheiro' && state.troco) msg += `%0ATroco para: R$ ${state.troco}`;
+  lines.push('');
+  lines.push(`Subtotal: ${money(subtotal)}`);
+  lines.push(`Entrega: ${money(fee)}`);
+  lines.push(`Total: ${money(subtotal+fee)}`);
+  lines.push('');
+  lines.push(`Pagamento: ${state.payment}`);
+  if(state.payment==='Dinheiro' && state.troco) lines.push(`Troco para: R$ ${state.troco}`);
 
   if(state.location!=='RETIRADA'){
-    msg += `%0A%0A`;
-    msg += `Local: ${state.location}%0A`;
-    msg += `Endereço: ${state.address}`;
+    lines.push(`Local: ${state.location}`);
+    lines.push(`Endereço: ${state.address}`);
   }
 
-  window.open(`https://wa.me/5549991853548?text=${msg}`, '_blank');
+  const msg = lines.join('\n');
+  const encoded = encodeURIComponent(msg);
+
+  const isMobile = /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+  const phone = "5549991853548"; // seu número
+  const url = isMobile ? `https://wa.me/${phone}?text=${encoded}` : `https://web.whatsapp.com/send?phone=${phone}&text=${encoded}`;
+
+  // redireciona
+  location.href = url;
 };
-
-
 
 function checkHours(){
   const now = new Date();
   const hour = now.getHours();
-  const open = hour>=18 && hour<23;
+  // Horário de atendimento: 18:00 - 23:00
+  isOpen = hour>=18 && hour<23;
   const badge = qs('#openBadge');
-  if(open){ badge.textContent='Aberto'; badge.className='badge open'; }
-  else { badge.textContent='Fechado'; badge.className='badge closed'; }
+  const siteNotice = qs('#siteNotice');
+  const siteNoticeText = qs('#siteNoticeText');
+  const siteNoticeHours = qs('#siteNoticeHours');
+
+  if(isOpen){ 
+    badge.textContent='Aberto'; badge.className='badge open';
+    siteNotice.classList.remove('info');
+    siteNotice.classList.add('hidden');
+  }
+  else { 
+    badge.textContent='Fechado'; badge.className='badge closed';
+    siteNotice.classList.remove('hidden');
+    siteNotice.classList.add('info');
+    siteNoticeText.textContent = 'No momento estamos fechados. Pedidos só podem ser finalizados dentro do horário de atendimento.';
+    siteNoticeHours.textContent = 'Atendimento: 18h - 23h';
+  }
   qs('#hoursText').textContent='Atendimento: 18h - 23h';
+  updateWhatsAppButtonState();
 }
 
+// Inicialização
 renderFilters(); renderMenu(); renderCart(); checkHours();
 qs('#locationSelect').value=state.location;
 qs('#addressInput').value=state.address;
 qs('#paymentSelect').value=state.payment;
 qs('#trocoInput').value=state.troco;
 updatePaymentUI();
+
+// Atualiza horário a cada minuto (opcional)
+setInterval(checkHours, 60 * 1000);
 </script>
 </body>
 </html>
