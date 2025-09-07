@@ -9,7 +9,7 @@
   --bg: #000000;
   --panel: #14182b;
   --panel-2: #1a1f36;
-  --accent: #000000;
+  --accent: #7e5bef;
   --accent-2: #35098d3f;
   --text: #d8dceb;
   --muted: #aab1c6;
@@ -24,7 +24,9 @@ body {
   margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial;
   background: radial-gradient(1200px 800px at 10% -10%, #1b2140 0%, var(--bg) 40%), var(--bg);
   color: var(--text);
+  background-image: url('https://www.transparenttextures.com/patterns/food.png');
 }
+
 a { color: inherit; }
 .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 header {
@@ -53,8 +55,9 @@ header {
 .btn {
   background: linear-gradient(135deg, var(--accent), var(--accent-2));
   color: white; border: none; padding: 10px 14px; border-radius: 12px; font-weight: 700; cursor: pointer;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow); transition: all 0.2s;
 }
+.btn:hover { transform: scale(1.03); }
 .btn.secondary { background: none; border:1px solid rgba(56, 20, 165, 0.35); color: var(--text); box-shadow: none; }
 .btn:disabled { opacity:.6; cursor:not-allowed; }
 
@@ -62,13 +65,14 @@ header {
 .panel { background: linear-gradient(180deg, var(--panel), rgba(0, 0, 0, 0.8)); border:1px solid rgba(167,139,250,.12); border-radius: var(--radius); box-shadow: var(--shadow); }
 
 .filters { display:flex; gap: 10px; padding: 16px; border-bottom: 1px solid rgba(167,139,250,.12); flex-wrap: wrap; }
-.chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; }
+.chip { padding: 8px 12px; border-radius: 999px; background: rgba(167,139,250,.15); border:1px solid rgba(167,139,250,.25); cursor:pointer; font-weight:600; transition: all 0.2s; }
 .chip.active { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: white; border-color: transparent; }
 
 .menu { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 14px; padding: 16px; }
-.card { background: var(--panel-2); border:1px solid rgba(167,139,250,.12); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; }
-.thumb { height: 140px; background: #0f1326; display:grid; place-items:center; font-size: 32px; overflow:hidden; }
-.thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.card { background: var(--panel-2); border:1px solid rgba(167,139,250,.12); border-radius: 18px; overflow: hidden; display:flex; flex-direction:column; position: relative; animation: fadeIn 0.4s ease forwards; }
+.card:hover { transform: scale(1.05); box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: all 0.2s ease-in-out; }
+.thumb { height: 140px; background: #0f1326; display:grid; place-items:center; font-size: 32px; overflow:hidden; cursor: pointer; }
+.thumb img { width:100%; height:100%; object-fit:cover; display:block; transition: all 0.3s; }
 .card-body { padding: 12px; display:flex; flex-direction:column; gap:8px; }
 .title { font-weight: 800; }
 .desc { color: var(--muted); font-size: 14px; min-height: 40px; }
@@ -81,7 +85,7 @@ header {
 .cart-list { display:flex; flex-direction:column; gap:10px; max-height: 50vh; overflow:auto; }
 .cart-item { display:grid; grid-template-columns: 1fr auto auto; gap:8px; align-items:center; background: rgba(167,139,250,.06); padding:10px; border-radius:12px; }
 .remove { background:none; border:none; color: var(--danger); cursor:pointer; font-weight:800; }
-.totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.25); padding-top:10px; display:flex; flex-direction:column; gap:6px; }
+.totals { margin-top: 6px; border-top:1px dashed rgba(19, 1, 73, 0.25); padding-top:10px; display:flex; flex-direction:column; gap:12px; }
 
 .footer-note { color: var(--muted); font-size: 13px; }
 
@@ -89,7 +93,18 @@ header {
 
 #whatsappBtn { background-color:#25D366; border:none; color:white; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); margin-top:8px; }
 
-@media (max-width: 980px) { .nav { grid-template-columns: 1fr; gap: 10px; } .layout { grid-template-columns: 1fr; } .cart { position: static; } }
+.badge-product { position: absolute; top: 10px; left: 10px; background: #ff5722; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
+
+@keyframes fadeIn {
+  0% {opacity:0; transform: translateY(20px);}
+  100% {opacity:1; transform: translateY(0);}
+}
+
+@media (max-width: 980px) { 
+  .nav { grid-template-columns: 1fr; gap: 10px; } 
+  .layout { grid-template-columns: 1fr; } 
+  .cart { position: fixed; bottom: 0; left: 0; right:0; max-height: 50%; z-index: 60; border-radius: 16px 16px 0 0; overflow:auto; }
+}
 </style>
 </head>
 <body>
@@ -158,7 +173,7 @@ header {
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 
 const PRODUCTS = [
-  { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg' },
+  { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
   { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
   { id: 3, name: 'Porção Peixe + Fritas', price: 60.5, category: 'Porções', desc: '500g de filé de tilápia, 500g de batata frita', img: 'https://img.freepik.com/fotos-premium/isca-de-peixe-com-batatas-fritas_538646-12784.jpg' },
   { id: 4, name: 'Batata Crinkle', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
@@ -168,23 +183,8 @@ const PRODUCTS = [
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
 
-const DELIVERY_FEES = {
-  "RETIRADA": 0,
-  "Bairro Santa Inês": 6,
-  "Centro": 5,
-  "Bairro Cristo Rei": 7,
-  "Bairro Portal Do Sol": 8,
-  "Bairro Três Pinheiros": 7,
-};
-
-const state = {
-  filter: 'Todos',
-  cart: {},
-  location: 'RETIRADA',
-  address: '',
-  payment: 'Dinheiro',
-  troco: '',
-};
+const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
+const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', address: '', payment: 'Dinheiro', troco: '' };
 
 const qs = (s, el=document) => el.querySelector(s);
 const qsa = (s, el=document) => [...el.querySelectorAll(s)];
@@ -196,22 +196,16 @@ function renderFilters() {
   qs('#filters').innerHTML = categories.map(cat => 
     `<button class="chip${state.filter===cat?' active':''}" data-cat="${cat}">${cat}</button>`
   ).join('');
-  qsa('.chip').forEach(b=>{
-    b.onclick = () => {
-      state.filter = b.dataset.cat; renderMenu();
-      qsa('.chip').forEach(c=>c.classList.remove('active'));
-      b.classList.add('active');
-    };
-  });
+  qsa('.chip').forEach(b=>{ b.onclick = () => { state.filter = b.dataset.cat; renderMenu(); qsa('.chip').forEach(c=>c.classList.remove('active')); b.classList.add('active'); }; });
 }
 
 function renderMenu() {
   const list = state.filter==='Todos' ? PRODUCTS : PRODUCTS.filter(p=>p.category===state.filter);
   const el = qs('#menu'); el.innerHTML='';
   list.forEach(p=>{
-    const card = document.createElement('article');
-    card.className='card';
+    const card = document.createElement('article'); card.className='card';
     card.innerHTML=`
+      ${p.badge?`<div class="badge-product">${p.badge}</div>`:''}
       <div class="thumb"><img src="${p.img}" alt="${p.name}"/></div>
       <div class="card-body">
         <div class="title">${p.name}</div>
@@ -229,16 +223,8 @@ function renderMenu() {
     `;
     el.appendChild(card);
     const input = card.querySelector('input');
-    const update = () => {
-      let qty = Math.max(0, parseInt(input.value)||0);
-      input.value = qty;
-      if(qty===0) delete state.cart[p.id]; else state.cart[p.id]=qty;
-      renderCart();
-    };
-    card.querySelectorAll('.step').forEach(btn=>btn.onclick=()=>{
-      input.value = Math.max(0,(parseInt(input.value)||0)+Number(btn.dataset.step));
-      update();
-    });
+    const update = () => { let qty = Math.max(0, parseInt(input.value)||0); input.value = qty; if(qty===0) delete state.cart[p.id]; else state.cart[p.id]=qty; renderCart(); };
+    card.querySelectorAll('.step').forEach(btn=>btn.onclick=()=>{ input.value = Math.max(0,(parseInt(input.value)||0)+Number(btn.dataset.step)); update(); });
     card.querySelector('.btn').onclick=()=>{ input.value=(parseInt(input.value)||0)+1; update(); };
     input.onchange=update;
   });
@@ -251,8 +237,7 @@ function renderCart() {
     const p = byId(Number(id));
     const qty = state.cart[id];
     subtotal += p.price*qty;
-    const item = document.createElement('div');
-    item.className='cart-item';
+    const item = document.createElement('div'); item.className='cart-item';
     item.innerHTML=`
       <div><strong>${p.name}</strong><br><small>${qty} × ${money(p.price)}</small></div>
       <div>${money(p.price*qty)}</div>
@@ -295,50 +280,45 @@ qs('#trocoInput').oninput = e => { state.troco=e.target.value; };
 qs('#clearBtn').onclick = () => { location.reload(); };
 qs('#emptyBtn').onclick = () => { state.cart={}; renderCart(); };
 
-qs('#copyPixBtn').onclick = ()=>{
-  qs('#pixCode').select();
-  document.execCommand('copy');
-  alert('Código Pix copiado!');
-};
+qs('#copyPixBtn').onclick = ()=>{ qs('#pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!'); };
 
-// Função de envio para WhatsApp com espaçamentos e local/endereço
-qs('#whatsappBtn').onclick = () => {
-  if(Object.keys(state.cart).length === 0){ 
-    alert('O carrinho está vazio!'); 
-    return; 
-  }
-  if(state.location !== 'RETIRADA' && !state.address){ 
-    alert('Informe o endereço!'); 
-    return; 
-  }
+// Função atualizada com espaçamentos
+qs('#whatsappBtn').onclick = ()=> {
+  if(Object.keys(state.cart).length===0){ alert('O carrinho está vazio!'); return; }
+  if(state.location!=='RETIRADA' && !state.address){ alert('Informe o endereço!'); return; }
 
-  const fee = DELIVERY_FEES[state.location] || 0;
-  let subtotal = 0;
-  let msg = 'Pedido do Cardápio:%0A';
+  const fee = DELIVERY_FEES[state.location]||0;
+  let subtotal=0;
+  let msg='Pedido do Cardápio:%0A'; // duas linhas antes dos itens
 
   for(const id in state.cart){
     const p = byId(Number(id));
     const qty = state.cart[id];
-    subtotal += p.price * qty;
-    msg += `${qty}x ${p.name} - ${money(p.price * qty)}%0A`;
+    subtotal += p.price*qty;
+    msg += `${qty}x ${p.name} - ${money(p.price*qty)}%0A`;
   }
 
-  msg += '%0A'; // Espaçamento antes do subtotal
-
+  // Espaçamento antes do subtotal
+  msg += `%0A`;
   msg += `Subtotal: ${money(subtotal)}%0A`;
   msg += `Entrega: ${money(fee)}%0A`;
-  msg += `Total: ${money(subtotal + fee)}%0A`;
+  msg += `Total: ${money(subtotal+fee)}%0A`;
 
-  msg += '%0A'; // Espaçamento antes do endereço/pagamento
-
-  msg += `Local: ${state.location}%0A`;
-  if(state.location !== 'RETIRADA') msg += `Endereço: ${state.address}%0A`;
-
+  // Linha de pagamento **logo após o total**
+  msg += `%0A`;
   msg += `Pagamento: ${state.payment}`;
-  if(state.payment === 'Dinheiro' && state.troco) msg += `%0A Troco para: R$ ${state.troco}`;
+  if(state.payment==='Dinheiro' && state.troco) msg += `%0ATroco para: R$ ${state.troco}`;
+
+  // Espaçamento antes do endereço/local
+  if(state.location!=='RETIRADA'){
+    msg += `%0A`;
+    msg += `Local: ${state.location}%0A`;
+    msg += `Endereço: ${state.address}`;
+  }
 
   window.open(`https://wa.me/5549991853548?text=${msg}`, '_blank');
 };
+
 
 function checkHours(){
   const now = new Date();
@@ -350,10 +330,7 @@ function checkHours(){
   qs('#hoursText').textContent='Atendimento: 18h - 23h';
 }
 
-renderFilters();
-renderMenu();
-renderCart();
-checkHours();
+renderFilters(); renderMenu(); renderCart(); checkHours();
 qs('#locationSelect').value=state.location;
 qs('#addressInput').value=state.address;
 qs('#paymentSelect').value=state.payment;
