@@ -93,6 +93,13 @@ header {
 
 #whatsappBtn { background-color:#25D366; border:none; color:white; padding:10px 14px; border-radius:12px; font-weight:700; cursor:pointer; box-shadow:var(--shadow); margin-top:8px; }
 
+/* 🔹 Botão desabilitado */
+button:disabled {
+  background-color: #888 !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+}
+
 .badge-product { position: absolute; top: 10px; left: 10px; background: #ff5722; color: white; padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: bold; }
 
 @keyframes fadeIn {
@@ -171,6 +178,8 @@ header {
 
 <script>
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
+<!-- O RESTO DO SEU SCRIPT PERMANECE IGUAL -->
+
 
 const PRODUCTS = [
   { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
@@ -284,12 +293,18 @@ qs('#copyPixBtn').onclick = ()=>{ qs('#pixCode').select(); document.execCommand(
 
 // Função atualizada com espaçamentos
 qs('#whatsappBtn').onclick = ()=> {
+  // Bloqueia se estiver fechado
+  if (qs('#status').textContent.includes('Fechado')) {
+    alert('Estamos fechados no momento! Não é possível enviar pedidos.');
+    return;
+  }
+
   if(Object.keys(state.cart).length===0){ alert('O carrinho está vazio!'); return; }
   if(state.location!=='RETIRADA' && !state.address){ alert('Informe o endereço!'); return; }
 
   const fee = DELIVERY_FEES[state.location]||0;
   let subtotal=0;
-  let msg='Pedido do Cardápio:%0A'; // duas linhas antes dos itens
+  let msg='Pedido do Cardápio:%0A%0A'; 
 
   for(const id in state.cart){
     const p = byId(Number(id));
@@ -298,26 +313,26 @@ qs('#whatsappBtn').onclick = ()=> {
     msg += `${qty}x ${p.name} - ${money(p.price*qty)}%0A`;
   }
 
-  // Espaçamento antes do subtotal
   msg += `%0A`;
   msg += `Subtotal: ${money(subtotal)}%0A`;
   msg += `Entrega: ${money(fee)}%0A`;
+
+  msg += `%0A`;
   msg += `Total: ${money(subtotal+fee)}%0A`;
 
-  // Linha de pagamento **logo após o total**
   msg += `%0A`;
   msg += `Pagamento: ${state.payment}`;
   if(state.payment==='Dinheiro' && state.troco) msg += `%0ATroco para: R$ ${state.troco}`;
 
-  // Espaçamento antes do endereço/local
   if(state.location!=='RETIRADA'){
-    msg += `%0A`;
+    msg += `%0A%0A`;
     msg += `Local: ${state.location}%0A`;
     msg += `Endereço: ${state.address}`;
   }
 
   window.open(`https://wa.me/5549991853548?text=${msg}`, '_blank');
 };
+
 
 
 function checkHours(){
