@@ -388,28 +388,22 @@ byId('clearBtn').addEventListener('click', ()=>{
 });
 
 byId('whatsappBtn').addEventListener('click', ()=>{
-  if(state.cart.length===0 || state.location==='Selecione o Local') return;
-
-  let msg = 'Pedido:\n';
+  if(state.cart.length===0) return;
+  let msg = '*Novo Pedido:*\n';
   state.cart.forEach(c=>{
     msg+=`${c.qty}x ${c.name} - ${formatPrice(c.price*c.qty)}\n`;
   });
+  
+  // Espaçamento entre itens e subtotal
+  msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n\n`;
 
-  msg += `Subtotal: ${byId('subtotal').textContent}\n`;
-  msg += `Entrega: ${byId('delivery').textContent}\n`;
-  msg += `Total: ${byId('total').textContent}\n`;
-  msg += `Local: ${state.location}\n`;
-
-  if(state.currentPos){
-    msg += `Minha localização atual: https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}\n`;
-  }
-
-  msg += `Pagamento: ${state.payment}`;
+  // Localização
+  msg += `*Local:* ${state.location}`;
+  if(state.currentPos) msg += `\n*Minha localização atual:* https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
+  
+  msg += `\n*Pagamento:* ${state.payment}`;
 
   window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
-});
-byId('copyPixBtn').addEventListener('click', ()=>{
-  navigator.clipboard.writeText(byId('pixCode').value).then(()=>alert('Código Pix copiado!'));
 });
 
 // ==== Inicialização ====
