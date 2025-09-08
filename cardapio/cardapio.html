@@ -41,7 +41,6 @@ body::after{
   position: fixed; inset: 0; z-index: -1;
   background: linear-gradient(180deg, rgba(2,6,23,0.6) 0%, rgba(2,6,23,0.8) 100%);
 }
-
 a { color: inherit; }
 .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
 header {
@@ -165,7 +164,6 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
       <option value="Pix">Pix</option>
       <option value="Cartão">Cartão</option>
     </select>
-    <!-- Campo de troco removido -->
     <textarea id="pixCode" readonly placeholder="Código Pix" style="display:none;"></textarea>
     <button id="copyPixBtn" class="btn secondary" style="display:none;margin-top:4px;">Copiar Pix</button>
     <button id="clearBtn" class="btn secondary">Limpar</button>
@@ -215,162 +213,209 @@ const PRODUCTS = [
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
 
-const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
+// Corrigido: chaves do DELIVERY_FEES para bater com select
+const DELIVERY_FEES = { "Retirada no Balcão": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 6 };
 
-const state = { filter: 'Todos', cart: {}, location: '', payment: '', currentLocation: '' };
-let isOpen = false;
+let state = {
+  cart: [],
+  location: 'Selecione o Local',
+  payment: 'Forma de Pagamento',
+  currentPos: null
+};
 
-// ==== Utilitários ====
+// ==== Funções auxiliares ====
 const byId = id => document.getElementById(id);
 
-// ==== Filtros e Menu ====
-function renderFilters() {
-  const categories = ['Todos', ...new Set(PRODUCTS.map(p=>p.category))];
-  const container = byId('filters'); container.innerHTML='';
-  categories.forEach(cat=>{
-    const chip = document.createElement('div');
-    chip.className = 'chip'+(state.filter===cat?' active':'');
-    chip.textContent = cat;
-    chip.addEventListener('click',()=>{ state.filter=cat; renderMenu(); renderFilters(); });
-    container.appendChild(chip);
-  });
+function formatPrice(val) { return BRL.format(val); }
+
+function showNotice(show) {
+  const notice = byId('siteNotice');
+  notice.classList.toggle('hidden', !show);
 }
 
-function renderMenu() {
-  const menu = byId('menu');
-  const filtered = state.filter==='Todos'?PRODUCTS:PRODUCTS.filter(p=>p.category===state.filter);
-  menu.innerHTML='';
-  filtered.forEach(p=>{
-    const card = document.createElement('div'); card.className='card';
-    card.innerHTML=`
-      <div class="thumb"><img src="${p.img}" alt="${p.name}"/></div>
-      <div class="card-body">
-        <div class="title">${p.name}</div>
-        <div class="desc">${p.desc}</div>
-        <div class="price">${BRL.format(p.price)}</div>
-        <div class="qty">
-          <button class="step" data-id="${p.id}" data-action="dec">-</button>
-          <span id="qty-${p.id}">${state.cart[p.id]||0}</span>
-          <button class="step" data-id="${p.id}" data-action="inc">+</button>
-        </div>
-        <button class="addBtn" data-id="${p.id}">Adicionar</button>
-      </div>
-    `;
-    if(p.badge){ const b=document.createElement('div'); b.className='badge-product'; b.textContent=p.badge; card.appendChild(b);}
-    menu.appendChild(card);
-  });
+// ==== Horário de funcionamento ====
+function checkOpenHours() {
+  const now = new Date();
+  const hour = now.getHours();
+  const open = hour >= OPEN_HOUR && hour < CLOSE_HOUR;
+  byId('openBadge').textContent = open ? 'Aberto' : 'Fechado';
+  byId('openBadge').classList.toggle('open', open);
+  byId('openBadge').classList.toggle('closed', !open);
+  showNotice(!open);
 }
-
-// ==== Carrinho ====
-function updateCart(id, action){
-  const prod = PRODUCTS.find(p=>p.id===id); if(!prod) return;
-  if(action==='inc'){ state.cart[id]=(state.cart[id]||0)+1; } 
-  else { state.cart[id]=Math.max(0,(state.cart[id]||0)-1); if(state.cart[id]===0) delete state.cart[id]; }
-  byId(`qty-${id}`).textContent=state.cart[id]||0; renderCart();
-}
-
-function renderCart(){
-  const list = byId('cartList'); list.innerHTML='';
-  let subtotal=0;
-  for(const [id,qty] of Object.entries(state.cart)){
-    const prod = PRODUCTS.find(p=>p.id==id);
-    subtotal += prod.price*qty;
-    const item = document.createElement('div'); item.className='cart-item';
-    item.innerHTML=`<span>${qty}x ${prod.name}</span><span>${BRL.format(prod.price*qty)}</span><button class="remove" data-id="${id}">X</button>`;
-    list.appendChild(item);
-  }
-  const delivery = DELIVERY_FEES[state.location]||0;
-  const total = subtotal + delivery;
-  byId('subtotal').textContent=BRL.format(subtotal);
-  byId('delivery').textContent=BRL.format(delivery);
-  byId('total').textContent=BRL.format(total);
-  
-  byId('whatsappBtn').disabled = Object.keys(state.cart).length===0 || !isOpen || state.location === '' || state.payment === '';
-}
-
-// ==== Eventos ====
-document.addEventListener('click', e=>{
-  if(e.target.classList.contains('step')) updateCart(parseInt(e.target.dataset.id), e.target.dataset.action);
-  if(e.target.classList.contains('remove')){ delete state.cart[parseInt(e.target.dataset.id)]; renderCart(); renderMenu(); }
-  if(e.target.classList.contains('addBtn')) updateCart(parseInt(e.target.dataset.id), 'inc');
-});
-
-byId('emptyBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); });
-byId('clearBtn').addEventListener('click', ()=>{ 
-  state.cart={}; renderCart(); renderMenu(); 
-  state.payment=''; byId('paymentSelect').value='Forma de Pagamento'; 
-  state.location=''; byId('locationSelect').value='Selecione o Local'; 
-});
-
-// Atualiza estado local/pagamento
-byId('locationSelect').addEventListener('change', e=>{
-  state.location = e.target.value==='Selecione o Local'?'':e.target.value;
-  renderCart(); updateCurrentLocation();
-});
-byId('paymentSelect').addEventListener('change', e=>{
-  state.payment = e.target.value==='Forma de Pagamento'?'':e.target.value;
-  if(state.payment==='Pix'){ 
-    byId('pixCode').style.display='block'; 
-    byId('copyPixBtn').style.display='block'; 
-    generatePix(); 
-  } else { 
-    byId('pixCode').style.display='none'; 
-    byId('copyPixBtn').style.display='none'; 
-  }
-});
-
-// ==== PIX ====
-function generatePix(){ 
-  const pixKey = "151.860.139-19"; 
-  byId('pixCode').value = `PIX Copie e pague usando o código: ${pixKey}\nValor: ${byId('total').textContent}`;
-}
-byId('copyPixBtn').addEventListener('click', ()=>{
-  byId('pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!');
-});
-
-// ==== WhatsApp ====
-byId('whatsappBtn').addEventListener('click', ()=>{
-  if(state.location === '' || state.payment === ''){
-    alert('Por favor, selecione o Local e a Forma de Pagamento antes de enviar o pedido.');
-    return;
-  }
-  let msg='*Novo Pedido:*\n';
-  for(const [id,qty] of Object.entries(state.cart)){
-    const prod = PRODUCTS.find(p=>p.id==id);
-    msg += `${qty}x ${prod.name} - ${BRL.format(prod.price*qty)}\n`;
-  }
-  msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n`;
-  msg += `\n*Local:* ${state.location}`;
-  if(state.currentLocation) msg += `\n*Minha localização:* ${state.currentLocation}`;
-  msg += `\n*Pagamento:* ${state.payment}\n`;
-  window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
-});
-
-// ==== Horário de atendimento ====
-function checkOpenHours(){
-  const now = new Date(); const hours = now.getHours();
-  isOpen = (hours>=OPEN_HOUR && hours<CLOSE_HOUR);
-  const badge = byId('openBadge');
-  badge.textContent = isOpen?'Aberto':'Fechado';
-  badge.className = 'badge '+(isOpen?'open':'closed');
-  byId('hoursText').textContent = `Horário: ${OPEN_HOUR}:00 às ${CLOSE_HOUR}:00`;
-  document.getElementById('siteNotice').classList.toggle('hidden',isOpen);
-}
-setInterval(checkOpenHours,1000); checkOpenHours();
+checkOpenHours();
+setInterval(checkOpenHours, 60000);
 
 // ==== Geolocalização ====
 function updateCurrentLocation() {
-  if(state.location !== 'RETIRADA' && navigator.geolocation) {
-    navigator.geolocation.watchPosition(
-      (pos) => { const { latitude, longitude } = pos.coords; state.currentLocation = `https://www.google.com/maps?q=${latitude},${longitude}`; },
-      (err) => { console.warn('Não foi possível obter a localização:', err.message); state.currentLocation = ''; },
-      { enableHighAccuracy: true, maximumAge: 10000, timeout: 5000 }
-    );
-  } else { state.currentLocation = ''; }
+  if(state.location !== 'Retirada no Balcão' && navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(pos => {
+      state.currentPos = pos.coords;
+      console.log('Localização atual', pos.coords);
+    }, err => console.log('Erro ao obter localização', err));
+  } else {
+    state.currentPos = null;
+  }
+}
+updateCurrentLocation();
+byId('locationSelect').addEventListener('change', e => {
+  state.location = e.target.value;
+  renderCart();
+  updateCurrentLocation();
+});
+
+// ==== Renderização de produtos ====
+const categories = [...new Set(PRODUCTS.map(p => p.category))];
+
+function renderFilters() {
+  const container = byId('filters');
+  container.innerHTML = '';
+  categories.forEach(cat=>{
+    const btn = document.createElement('div');
+    btn.className='chip active';
+    btn.textContent=cat;
+    btn.onclick=()=>{ filterCategory(cat); };
+    container.appendChild(btn);
+  });
+}
+function filterCategory(cat) {
+  const cards = document.querySelectorAll('.card');
+  cards.forEach(c=>c.style.display = c.dataset.category === cat ? 'block':'none');
+}
+function renderMenu() {
+  const container = byId('menu');
+  container.innerHTML = '';
+  PRODUCTS.forEach(p=>{
+    const card = document.createElement('div');
+    card.className='card';
+    card.dataset.category = p.category;
+    const thumb = document.createElement('div');
+    thumb.className='thumb';
+    const img = document.createElement('img'); img.src=p.img;
+    thumb.appendChild(img);
+    const body = document.createElement('div'); body.className='card-body';
+    const title = document.createElement('div'); title.className='title'; title.textContent=p.name;
+    const desc = document.createElement('div'); desc.className='desc'; desc.textContent=p.desc;
+    const price = document.createElement('div'); price.className='price'; price.textContent=formatPrice(p.price);
+    const qty = document.createElement('div'); qty.className='qty';
+    const minus = document.createElement('button'); minus.className='step'; minus.textContent='-';
+    const qtyNum = document.createElement('span'); qtyNum.textContent='0';
+    const plus = document.createElement('button'); plus.className='step'; plus.textContent='+';
+    const addBtn = document.createElement('button'); addBtn.className='addBtn'; addBtn.textContent='Adicionar';
+    qty.appendChild(minus); qty.appendChild(qtyNum); qty.appendChild(plus); body.appendChild(title); body.appendChild(desc); body.appendChild(price); body.appendChild(qty); body.appendChild(addBtn); card.appendChild(thumb); card.appendChild(body);
+
+    // Badge
+    if(p.badge){ const b = document.createElement('div'); b.className='badge-product'; b.textContent=p.badge; card.appendChild(b); }
+
+    container.appendChild(card);
+
+    let count=0;
+    plus.onclick=()=>{
+      count++; qtyNum.textContent=count;
+      addToCart(p,1); renderCart();
+    };
+    minus.onclick=()=>{
+      if(count>0){ count--; qtyNum.textContent=count; removeFromCart(p,1); renderCart(); }
+    };
+    addBtn.onclick=()=>{
+      count++; qtyNum.textContent=count;
+      addToCart(p,1); renderCart();
+    };
+  });
+}
+function addToCart(product, qty=1) {
+  const item = state.cart.find(c=>c.id===product.id);
+  if(item) item.qty+=qty;
+  else state.cart.push({...product, qty});
+}
+function removeFromCart(product, qty=1) {
+  const item = state.cart.find(c=>c.id===product.id);
+  if(!item) return;
+  item.qty-=qty;
+  if(item.qty<=0) state.cart = state.cart.filter(c=>c.id!==product.id);
 }
 
+// ==== Carrinho ====
+function renderCart() {
+  const list = byId('cartList'); list.innerHTML='';
+  let subtotal=0;
+  state.cart.forEach(c=>{
+    subtotal+=c.price*c.qty;
+    const div = document.createElement('div'); div.className='cart-item';
+    div.innerHTML=`<span>${c.qty}x ${c.name}</span><span>${formatPrice(c.price*c.qty)}</span><button class="remove">×</button>`;
+    div.querySelector('.remove').onclick=()=>{
+      removeFromCart(c, c.qty); renderCart();
+    };
+    list.appendChild(div);
+  });
+  byId('subtotal').textContent=formatPrice(subtotal);
+  const delivery = DELIVERY_FEES[state.location]||0;
+  byId('delivery').textContent=formatPrice(delivery);
+  byId('total').textContent=formatPrice(subtotal+delivery);
+
+  // WhatsApp botão
+  const waBtn = byId('whatsappBtn');
+  waBtn.disabled = state.cart.length===0 || state.location==='Selecione o Local';
+
+  // PIX
+  const pixArea = byId('pixCode'); 
+  const copyBtn = byId('copyPixBtn');
+  if(state.payment==='Pix' && state.cart.length>0){
+    pixArea.style.display='block';
+    copyBtn.style.display='inline-block';
+    pixArea.value = `PIX Copie e pague usando o código: 00020126580014BR.GOV.BCB.PIX0114+55499918535485204000053039865405.005802BR5925Requinte Bar e Cozinha6009Sao Leopoldo610805.005802BR5913Pix12362070503***6304C9C0\nValor: ${byId('total').textContent}`;
+  } else { pixArea.style.display='none'; copyBtn.style.display='none'; }
+}
+
+// ==== Eventos ====
+byId('paymentSelect').addEventListener('change', e=>{
+  state.payment = e.target.value;
+  renderCart();
+});
+
+byId('emptyBtn').addEventListener('click', ()=>{
+  state.cart=[];
+  renderCart();
+});
+
+byId('clearBtn').addEventListener('click', ()=>{
+  state.cart=[];
+  state.location='Selecione o Local';
+  state.payment='Forma de Pagamento';
+  byId('locationSelect').value = state.location;
+  byId('paymentSelect').value = state.payment;
+  renderCart();
+});
+
+byId('whatsappBtn').addEventListener('click', ()=>{
+  if(state.cart.length===0 || state.location==='Selecione o Local') return;
+
+  let msg = 'Pedido:\n';
+  state.cart.forEach(c=>{
+    msg+=`${c.qty}x ${c.name} - ${formatPrice(c.price*c.qty)}\n`;
+  });
+
+  msg += `Subtotal: ${byId('subtotal').textContent}\n`;
+  msg += `Entrega: ${byId('delivery').textContent}\n`;
+  msg += `Total: ${byId('total').textContent}\n`;
+  msg += `Local: ${state.location}\n`;
+
+  if(state.currentPos){
+    msg += `Minha localização atual: https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}\n`;
+  }
+
+  msg += `Pagamento: ${state.payment}`;
+
+  window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
+});
+byId('copyPixBtn').addEventListener('click', ()=>{
+  navigator.clipboard.writeText(byId('pixCode').value).then(()=>alert('Código Pix copiado!'));
+});
+
 // ==== Inicialização ====
-renderFilters(); renderMenu(); renderCart(); updateCurrentLocation();
+renderFilters();
+renderMenu();
+renderCart();
 </script>
 </body>
 </html>
