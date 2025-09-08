@@ -151,7 +151,8 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
   </div>
   <div class="controls">
     <select id="locationSelect" class="select">
-      <option value="RETIRADA">Retirada no balcão</option>
+      <option value="Selecione o Local">Selecione o Local</option>
+      <option value="Retirada no Balcão">Retirada no balcão</option>
       <option value="Bairro Santa Inês">Bairro Santa Inês</option>
       <option value="Centro">Centro</option>
       <option value="Bairro Cristo Rei">Bairro Cristo Rei</option>
@@ -159,11 +160,12 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
       <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
     </select>
     <select id="paymentSelect" class="select">
+      <option value="Forma de Pagamento">Forma de Pagamento</option>
       <option value="Dinheiro">Dinheiro</option>
       <option value="Pix">Pix</option>
       <option value="Cartão">Cartão</option>
     </select>
-    <input id="trocoInput" class="input" placeholder="Troco para quanto?" style="display:none;" />
+    <!-- Campo de troco removido -->
     <textarea id="pixCode" readonly placeholder="Código Pix" style="display:none;"></textarea>
     <button id="copyPixBtn" class="btn secondary" style="display:none;margin-top:4px;">Copiar Pix</button>
     <button id="clearBtn" class="btn secondary">Limpar</button>
@@ -215,7 +217,7 @@ const PRODUCTS = [
 
 const DELIVERY_FEES = { "RETIRADA": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 7 };
 
-const state = { filter: 'Todos', cart: {}, location: 'RETIRADA', payment: 'Dinheiro', troco: '', currentLocation: '' };
+const state = { filter: 'Todos', cart: {}, location: '', payment: '', currentLocation: '' };
 let isOpen = false;
 
 // ==== Utilitários ====
@@ -282,7 +284,8 @@ function renderCart(){
   byId('subtotal').textContent=BRL.format(subtotal);
   byId('delivery').textContent=BRL.format(delivery);
   byId('total').textContent=BRL.format(total);
-  byId('whatsappBtn').disabled = Object.keys(state.cart).length===0 || !isOpen;
+  
+  byId('whatsappBtn').disabled = Object.keys(state.cart).length===0 || !isOpen || state.location === '' || state.payment === '';
 }
 
 // ==== Eventos ====
@@ -293,26 +296,44 @@ document.addEventListener('click', e=>{
 });
 
 byId('emptyBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); });
-byId('clearBtn').addEventListener('click', ()=>{ state.cart={}; renderCart(); renderMenu(); state.troco=''; byId('trocoInput').value=''; state.payment='Dinheiro'; byId('paymentSelect').value='Dinheiro'; });
+byId('clearBtn').addEventListener('click', ()=>{ 
+  state.cart={}; renderCart(); renderMenu(); 
+  state.payment=''; byId('paymentSelect').value='Forma de Pagamento'; 
+  state.location=''; byId('locationSelect').value='Selecione o Local'; 
+});
 
+// Atualiza estado local/pagamento
 byId('locationSelect').addEventListener('change', e=>{
-  state.location = e.target.value; renderCart(); updateCurrentLocation();
+  state.location = e.target.value==='Selecione o Local'?'':e.target.value;
+  renderCart(); updateCurrentLocation();
 });
-
 byId('paymentSelect').addEventListener('change', e=>{
-  state.payment=e.target.value;
-  if(state.payment==='Dinheiro'){ byId('trocoInput').style.display='block'; byId('pixCode').style.display='none'; byId('copyPixBtn').style.display='none'; }
-  else if(state.payment==='Pix'){ byId('trocoInput').style.display='none'; byId('pixCode').style.display='block'; byId('copyPixBtn').style.display='block'; generatePix(); }
-  else { byId('trocoInput').style.display='none'; byId('pixCode').style.display='none'; byId('copyPixBtn').style.display='none'; }
+  state.payment = e.target.value==='Forma de Pagamento'?'':e.target.value;
+  if(state.payment==='Pix'){ 
+    byId('pixCode').style.display='block'; 
+    byId('copyPixBtn').style.display='block'; 
+    generatePix(); 
+  } else { 
+    byId('pixCode').style.display='none'; 
+    byId('copyPixBtn').style.display='none'; 
+  }
 });
 
-byId('trocoInput').addEventListener('input', e=>{ state.troco=e.target.value; });
+// ==== PIX ====
+function generatePix(){ 
+  const pixKey = "151.860.139-19"; 
+  byId('pixCode').value = `PIX Copie e pague usando o código: ${pixKey}\nValor: ${byId('total').textContent}`;
+}
+byId('copyPixBtn').addEventListener('click', ()=>{
+  byId('pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!');
+});
 
-function generatePix(){ byId('pixCode').value = `PIX Copie e cole para pagar: ${byId('total').textContent}`; }
-byId('copyPixBtn').addEventListener('click', ()=>{ byId('pixCode').select(); document.execCommand('copy'); alert('Código Pix copiado!'); });
-
-// ==== WhatsApp com localização ====
+// ==== WhatsApp ====
 byId('whatsappBtn').addEventListener('click', ()=>{
+  if(state.location === '' || state.payment === ''){
+    alert('Por favor, selecione o Local e a Forma de Pagamento antes de enviar o pedido.');
+    return;
+  }
   let msg='*Novo Pedido:*\n';
   for(const [id,qty] of Object.entries(state.cart)){
     const prod = PRODUCTS.find(p=>p.id==id);
@@ -337,7 +358,7 @@ function checkOpenHours(){
 }
 setInterval(checkOpenHours,1000); checkOpenHours();
 
-// ==== Geolocalização condicional ====
+// ==== Geolocalização ====
 function updateCurrentLocation() {
   if(state.location !== 'RETIRADA' && navigator.geolocation) {
     navigator.geolocation.watchPosition(
