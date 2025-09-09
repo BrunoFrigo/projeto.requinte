@@ -152,11 +152,7 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
     <select id="locationSelect" class="select">
       <option value="Selecione o Local">Selecione o Local</option>
       <option value="Retirada no Balcão">Retirada no balcão</option>
-      <option value="Bairro Santa Inês">Bairro Santa Inês</option>
-      <option value="Centro">Centro</option>
-      <option value="Bairro Cristo Rei">Bairro Cristo Rei</option>
-      <option value="Bairro Portal Do Sol">Bairro Portal Do Sol</option>
-      <option value="Bairro Três Pinheiros">Bairro Três Pinheiros</option>
+      <option value="Pedido Para Entrega">Pedido Para Entrega</option>
     </select>
     <select id="paymentSelect" class="select">
       <option value="Forma de Pagamento">Forma de Pagamento</option>
@@ -214,7 +210,7 @@ const PRODUCTS = [
 ];
 
 // 
-const DELIVERY_FEES = { "Retirada no Balcão": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 6 };
+const DELIVERY_FEES = { "Retirada no Balcão": 0, "Pedido para entrega": 5};
 
 let state = {
   cart: [],
@@ -304,7 +300,7 @@ function renderMenu() {
     const addBtn = document.createElement('button'); addBtn.className='addBtn'; addBtn.textContent='Adicionar';
     qty.appendChild(minus); qty.appendChild(qtyNum); qty.appendChild(plus); body.appendChild(title); body.appendChild(desc); body.appendChild(price); body.appendChild(qty); body.appendChild(addBtn); card.appendChild(thumb); card.appendChild(body);
 
-    // Badge
+    // Badge de Adicionar ao Carrinho
     if(p.badge){ const b = document.createElement('div'); b.className='badge-product'; b.textContent=p.badge; card.appendChild(b); }
 
     container.appendChild(card);
@@ -353,7 +349,7 @@ function renderCart() {
   byId('delivery').textContent=formatPrice(delivery);
   byId('total').textContent=formatPrice(subtotal+delivery);
 
-  // WhatsApp botão
+  // WhatsApp botão (tem que selecionar o local para ativar o botão)
   const waBtn = byId('whatsappBtn');
   waBtn.disabled = state.cart.length===0 || state.location==='Selecione o Local';
 
@@ -394,10 +390,10 @@ byId('whatsappBtn').addEventListener('click', ()=>{
     msg+=`${c.qty}x ${c.name} - ${formatPrice(c.price*c.qty)}\n`;
   });
   
-  // Espaçamento entre itens e subtotal
+  // Espaçamento entre itens e subtotal (envio para WhatsApp)
   msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n\n`;
 
-  // Localização
+  // Localização Em Tempo Real
   msg += `*Local:* ${state.location}`;
   if(state.currentPos) msg += `\n*Minha localização atual:* https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
   
