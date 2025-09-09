@@ -389,19 +389,19 @@ byId('clearBtn').addEventListener('click', ()=>{
 
 byId('whatsappBtn').addEventListener('click', ()=>{
   if(state.cart.length===0) return;
-  let msg = 'Novo Pedido:\n';
+  let msg = '*Novo Pedido:*\n';
   state.cart.forEach(c=>{
     msg+=`${c.qty}x ${c.name} - ${formatPrice(c.price*c.qty)}\n`;
   });
   
   // Espaçamento entre itens e subtotal
-  msg += `\nSubtotal: ${byId('subtotal').textContent}\nEntrega: ${byId('delivery').textContent}\nTotal: ${byId('total').textContent}\n\n`;
+  msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n\n`;
 
   // Localização
-  msg += `Local: ${state.location}`;
-  if(state.currentPos) msg += `\nMinha localização atual: https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
+  msg += `*Local:* ${state.location}`;
+  if(state.currentPos) msg += `\n*Minha localização atual:* https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
   
-  msg += `\nPagamento: ${state.payment}`;
+  msg += `\n*Pagamento:* ${state.payment}`;
 
   window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
 });
