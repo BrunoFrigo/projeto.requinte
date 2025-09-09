@@ -197,7 +197,7 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
 </main>
 
 <script>
-// ==== Configurações e estado ====
+// Configurações e estado 
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const OPEN_HOUR = 11;
 const CLOSE_HOUR = 22;
@@ -213,7 +213,7 @@ const PRODUCTS = [
   { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
 ];
 
-// Corrigido: chaves do DELIVERY_FEES para bater com select
+// 
 const DELIVERY_FEES = { "Retirada no Balcão": 0, "Bairro Santa Inês": 6, "Centro": 5, "Bairro Cristo Rei": 7, "Bairro Portal Do Sol": 8, "Bairro Três Pinheiros": 6 };
 
 let state = {
@@ -223,7 +223,7 @@ let state = {
   currentPos: null
 };
 
-// ==== Funções auxiliares ====
+// Funções auxiliares 
 const byId = id => document.getElementById(id);
 
 function formatPrice(val) { return BRL.format(val); }
@@ -233,7 +233,7 @@ function showNotice(show) {
   notice.classList.toggle('hidden', !show);
 }
 
-// ==== Horário de funcionamento ====
+// Horário de funcionamento 
 function checkOpenHours() {
   const now = new Date();
   const hour = now.getHours();
@@ -246,7 +246,7 @@ function checkOpenHours() {
 checkOpenHours();
 setInterval(checkOpenHours, 60000);
 
-// ==== Geolocalização ====
+// Localização
 function updateCurrentLocation() {
   if(state.location !== 'Retirada no Balcão' && navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos => {
@@ -264,7 +264,7 @@ byId('locationSelect').addEventListener('change', e => {
   updateCurrentLocation();
 });
 
-// ==== Renderização de produtos ====
+// Renderização de produtos 
 const categories = [...new Set(PRODUCTS.map(p => p.category))];
 
 function renderFilters() {
@@ -335,7 +335,7 @@ function removeFromCart(product, qty=1) {
   if(item.qty<=0) state.cart = state.cart.filter(c=>c.id!==product.id);
 }
 
-// ==== Carrinho ====
+// Carrinho
 function renderCart() {
   const list = byId('cartList'); list.innerHTML='';
   let subtotal=0;
@@ -367,7 +367,7 @@ function renderCart() {
   } else { pixArea.style.display='none'; copyBtn.style.display='none'; }
 }
 
-// ==== Eventos ====
+// Eventos 
 byId('paymentSelect').addEventListener('change', e=>{
   state.payment = e.target.value;
   renderCart();
@@ -389,24 +389,24 @@ byId('clearBtn').addEventListener('click', ()=>{
 
 byId('whatsappBtn').addEventListener('click', ()=>{
   if(state.cart.length===0) return;
-  let msg = '*Novo Pedido:*\n';
+  let msg = 'Novo Pedido:\n';
   state.cart.forEach(c=>{
     msg+=`${c.qty}x ${c.name} - ${formatPrice(c.price*c.qty)}\n`;
   });
   
   // Espaçamento entre itens e subtotal
-  msg += `\n*Subtotal:* ${byId('subtotal').textContent}\n*Entrega:* ${byId('delivery').textContent}\n*Total:* ${byId('total').textContent}\n\n`;
+  msg += `\nSubtotal: ${byId('subtotal').textContent}\nEntrega: ${byId('delivery').textContent}\nTotal: ${byId('total').textContent}\n\n`;
 
   // Localização
-  msg += `*Local:* ${state.location}`;
-  if(state.currentPos) msg += `\n*Minha localização atual:* https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
+  msg += `Local: ${state.location}`;
+  if(state.currentPos) msg += `\nMinha localização atual: https://www.google.com/maps?q=${state.currentPos.latitude},${state.currentPos.longitude}`;
   
-  msg += `\n*Pagamento:* ${state.payment}`;
+  msg += `\nPagamento: ${state.payment}`;
 
   window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
 });
 
-// ==== Inicialização ====
+// Inicialização
 renderFilters();
 renderMenu();
 renderCart();
