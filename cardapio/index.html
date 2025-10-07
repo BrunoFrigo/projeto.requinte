@@ -19,7 +19,7 @@
       color:#e6eef6;
       min-height:100vh;
     }
-    .container{max-width:1000px;margin:40px auto;padding:24px}
+    main.container{max-width:1000px;margin:40px auto;padding:24px}
     header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
     h1{margin:0;font-size:28px}
     p.lead{color:var(--muted);margin:6px 0 18px}
@@ -39,13 +39,11 @@
       transition: transform .3s, box-shadow .3s;
       border: 1px solid rgba(255,255,255,0.1);
     }
-    /* brilho no hover */
     details:hover{
       transform: scale(1.02);
       box-shadow: 0 0 25px rgba(125,211,252,0.4);
     }
 
-    /* camada escura para contraste do texto */
     details::before {
       content:"";
       position:absolute;
@@ -54,7 +52,7 @@
       z-index:0;
     }
 
-    summary, .meta, .content{
+    summary, header.meta, section.content{
       position: relative;
       z-index:1;
     }
@@ -80,8 +78,8 @@
     }
 
     summary::-webkit-details-marker{display:none}
-    .meta{font-size:13px;color:#e5e5e5;margin-top:8px;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
-    .content p{margin:0;font-size:15px;line-height:1.4;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
+    header.meta{font-size:13px;color:#e5e5e5;margin-top:8px;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
+    section.content p{margin:0;font-size:15px;line-height:1.4;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
     .tag{background:var(--glass);padding:6px 8px;border-radius:999px;font-size:12px;color:#fff;backdrop-filter:blur(4px)}
     .links{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
@@ -91,25 +89,13 @@
 
     details[open] summary::after{content:"▲";margin-left:auto;font-size:14px;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
     details summary::after{content:"▼";margin-left:auto;font-size:14px;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
-    
-    #searchBar{
-      flex:1;min-width:200px;padding:8px 12px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.15);
-      background:rgba(255,255,255,0.05);
-      color:#e6eef6;font-size:14px
-    }
-    #searchBar:focus{outline:none;border-color:var(--accent)}
-    @media (max-width:420px){h1{font-size:20px}}
   </style>
 </head>
 <body>
   <main class="container">
     <header>
-      <div>
-        <h1>Resumos e temas — Seleção de filmes</h1>
-        <p class="lead">Clique no título para abrir as informações do filme.</p>
-      </div>
-      <input id="searchBar" type="text" placeholder="🔎 Buscar filme ou tema..." onkeyup="filterMovies()"/>
+      <h1>Resumos e temas — Seleção de filmes</h1>
+      <p class="lead">Clique no título para abrir as informações do filme.</p>
     </header>
 
     <section id="moviesList" style="display:flex;flex-direction:column;gap:18px">
@@ -119,19 +105,10 @@
           <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdnb6FG3ROcGi6huNl68GHo5e22MwjVVBqS9QPhVtqwRxUH32HOsHdn-BGnUS-s3mFPM&usqp=CAU"/>
           O Dilema das Redes (The Social Dilemma)
         </summary>
-        <div class="meta">Documentário • 2020 • Direção: Jeff Orlowski</div>
-        <div class="content">
+        <header class="meta">Documentário • 2020 • Direção: Jeff Orlowski</header>
+        <section class="content">
           <p>Documentário que revela os bastidores das maiores plataformas digitais, com depoimentos de ex-executivos do Facebook, Google, Twitter e outras big techs. Mostra como os algoritmos foram criados para capturar a atenção do usuário, influenciar comportamentos e aumentar lucros por meio da coleta de dados, recomendação de conteúdo e publicidade direcionada. O filme debate questões éticas, saúde mental — especialmente entre jovens —, polarização política e os riscos de manipulação em massa.</p>
-          <div class="tags">
-            <span class="tag">Algoritmos</span>
-            <span class="tag">Privacidade</span>
-            <span class="tag">Sociedade</span>
-          </div>
-          <div class="links">
-            <a class="link-btn" href="https://www.youtube.com/watch?v=uaaC57tcci0" target="_blank">▶ Trailer</a>
-            <a class="link-btn" href="https://www.netflix.com/br/title/81254224" target="_blank">📺 Netflix</a>
-          </div>
-        </div>
+        </section>
       </details>
 
       <details style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU3l0mUMhCQtDav3MlmfksOZsHnWOiCbnaCA&s')" data-title="Os Estagiários" data-tags="comédia trabalho reinvenção tecnologia">
@@ -139,19 +116,10 @@
           <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU3l0mUMhCQtDav3MlmfksOZsHnWOiCbnaCA&s"/>
           Os Estagiários (The Internship)
         </summary>
-        <div class="meta">Comédia • 2013 • Direção: Shawn Levy</div>
-        <div class="content">
+        <header class="meta">Comédia • 2013 • Direção: Shawn Levy</header>
+        <section class="content">
           <p>Comédia sobre dois vendedores desempregados que conseguem estágio em uma big tech. Mostra humor, choque geracional e reinvenção profissional.</p>
-          <div class="tags">
-            <span class="tag">Comédia</span>
-            <span class="tag">Trabalho</span>
-            <span class="tag">Reinvenção</span>
-          </div>
-          <div class="links">
-            <a class="link-btn" href="https://www.youtube.com/watch?v=cdnoqCViqUo" target="_blank">▶ Trailer</a>
-            <a class="link-btn" href="https://www.starplus.com/pt-br/movies/the-internship/3WqFcC4pqzQ7" target="_blank">📺 Streaming</a>
-          </div>
-        </div>
+        </section>
       </details>
 
       <details style="background-image:url('https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ')" data-title="Filhos do Paraíso" data-tags="infância empatia família drama iraniano">
@@ -159,18 +127,10 @@
           <img class="poster" src="https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ"/>
           Filhos do Paraíso (Children of Heaven)
         </summary>
-        <div class="meta">Drama • 1997 • Direção: Majid Majidi</div>
-        <div class="content">
-          <p>Drama iraniano sensível que acompanha Ali e sua irmã Zahra, crianças de uma família pobre que dividem um único par de sapatos para ir à escola. A partir desse pequeno problema cotidiano, o filme revela afeto, solidariedade e a inocência da infância diante das dificuldades da vida. A narrativa simples, comovente e cheia de empatia transmite valores como união familiar, perseverança e generosidade.</p>
-          <div class="tags">
-            <span class="tag">Infância</span>
-            <span class="tag">Empatia</span>
-            <span class="tag">Família</span>
-          </div>
-          <div class="links">
-            <a class="link-btn" href="https://www.youtube.com/watch?v=vB_qGf8DqAU" target="_blank">▶ Trailer</a>
-          </div>
-        </div>
+        <header class="meta">Drama • 1997 • Direção: Majid Majidi</header>
+        <section class="content">
+          <p>Filme iraniano sobre irmãos que dividem um único par de sapatos. Simples e emocionante, fala de empatia e inocência.</p>
+        </section>
       </details>
 
       <details style="background-image:url('https://m.media-amazon.com/images/M/MV5BZDdhNTY3YTgtYmQwMC00MjM1LTgzYzMtMGM1N2E0NWM1NDlkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg')" data-title="Eu Robô" data-tags="ia ética ação ficção científica asimov">
@@ -178,19 +138,10 @@
           <img class="poster" src="https://m.media-amazon.com/images/M/MV5BZDdhNTY3YTgtYmQwMC00MjM1LTgzYzMtMGM1N2E0NWM1NDlkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"/>
           Eu, Robô (I, Robot)
         </summary>
-        <div class="meta">Ação / Ficção científica • 2004 • Direção: Alex Proyas</div>
-        <div class="content">
-          <p>Suspense de ação inspirado nos contos de Isaac Asimov, ambientado em 2035, onde robôs fazem parte do dia a dia humano, obedecendo às Três Leis da Robótica. Um detetive cético investiga a morte suspeita de um cientista e descobre indícios de que um robô pode ter agido contra as leis que deveriam impedi-lo de ferir humanos. O filme questiona os limites da inteligência artificial, a ética da tecnologia e os riscos de confiar demais em máquinas autônomas.</p>
-          <div class="tags">
-            <span class="tag">IA</span>
-            <span class="tag">Ética</span>
-            <span class="tag">Ação</span>
-          </div>
-          <div class="links">
-            <a class="link-btn" href="https://www.youtube.com/watch?v=rL6RRIOZyCM" target="_blank">▶ Trailer</a>
-            <a class="link-btn" href="https://www.disneyplus.com/movies/i-robot/1LJWbmyZ2ZJK" target="_blank">📺 Disney+</a>
-          </div>
-        </div>
+        <header class="meta">Ação / Ficção científica • 2004 • Direção: Alex Proyas</header>
+        <section class="content">
+          <p>Baseado em Asimov, mostra detetive investigando crime cometido por robô. Discute IA, ética e confiança nas máquinas.</p>
+        </section>
       </details>
 
       <details style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgkQbwBiVZIHoTsJHQGzND3zEHtWCemRcKmg&s')" data-title="Matrix" data-tags="simulação filosofia ação ficção científica cyberpunk">
@@ -198,19 +149,10 @@
           <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgkQbwBiVZIHoTsJHQGzND3zEHtWCemRcKmg&s"/>
           Matriz (The Matrix)
         </summary>
-        <div class="meta">Ficção científica • 1999 • Direção: Wachowski</div>
-        <div class="content">
-          <p>Clássico da ficção científica e do cyberpunk em que Thomas Anderson, conhecido como Neo, descobre que a realidade que vê é, na verdade, uma simulação criada por máquinas inteligentes para manter a humanidade sob controle. Ao se juntar a um grupo de rebeldes, ele precisa despertar para o “mundo real” e enfrentar escolhas entre ilusão e liberdade. O filme mistura ação estilizada, filosofia, debates sobre livre-arbítrio, percepção da realidade e natureza da consciência.</p>
-          <div class="tags">
-            <span class="tag">Simulação</span>
-            <span class="tag">Filosofia</span>
-            <span class="tag">Ação</span>
-          </div>
-          <div class="links">
-            <a class="link-btn" href="https://www.youtube.com/watch?v=vKQi3bBA1y8" target="_blank">▶ Trailer</a>
-            <a class="link-btn" href="https://www.max.com/br/pt/movies/the-matrix" target="_blank">📺 HBO Max</a>
-          </div>
-        </div>
+        <header class="meta">Ficção científica • 1999 • Direção: Wachowski</header>
+        <section class="content">
+          <p>Neo descobre que vive numa simulação criada por máquinas. Mistura ação, filosofia e reflexões sobre realidade e livre-arbítrio.</p>
+        </section>
       </details>
 
     </section>
@@ -219,17 +161,5 @@
       <p>Use a barra de busca para filtrar por nome ou tema, por exemplo "IA", "Comédia" ou "Filosofia".</p>
     </footer>
   </main>
-
-  <script>
-    function filterMovies(){
-      const input=document.getElementById('searchBar').value.toLowerCase();
-      const movies=document.querySelectorAll('#moviesList details');
-      movies.forEach(m=>{
-        const title=m.getAttribute('data-title').toLowerCase();
-        const tags=m.getAttribute('data-tags').toLowerCase();
-        m.style.display = (title.includes(input) || tags.includes(input)) ? 'flex':'none';
-      });
-    }
-  </script>
 </body>
 </html>
