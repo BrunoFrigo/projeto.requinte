@@ -185,7 +185,7 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
     <div class="totals">
       <div style="display:flex; justify-content:space-between"><span>Subtotal</span><strong id="subtotal">R$ 0,00</strong></div>
       <div style="display:flex; justify-content:space-between"><span>Entrega</span><strong id="delivery">R$ 0,00</strong></div>
-      <div style="display:flex; justify-content:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
+      <div style="display:flex; just:space-between; font-size:18px"><span>Total</span><strong id="total">R$ 0,00</strong></div>
       <button id="whatsappBtn" disabled>Enviar para WhatsApp</button>
     </div>
   </aside>
@@ -197,16 +197,15 @@ button:disabled { background-color: #888 !important; cursor: not-allowed !import
 const BRL = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' });
 const OPEN_HOUR = 11;
 const CLOSE_HOUR = 22;
-
 const PRODUCTS = [
   { id: 1, name: 'Duplo Bacon Cheddar', price: 28.0, category: 'Burgers', desc: 'Pão brioche, 2x hamburger, queijo cheddar, queijo prato', img: 'https://brazzabnu.chefware.com.br/175/0/0/cheddar-amp--bacon-duplo-2-carnes.jpg', badge:'Mais pedido' },
   { id: 2, name: 'X-Tudo', price: 25.0, category: 'Burgers', desc: 'Dois discos 100 g, cheddar cremoso, cebola', img: 'https://instadelivery-public.nyc3.cdn.digitaloceanspaces.com/groups/172304842966b3a1edd5564.jpeg' },
   { id: 3, name: 'Porção Peixe + Fritas', price: 60.5, category: 'Porções', desc: '500g de filé de tilápia, 500g de batata frita', img: 'https://img.freepik.com/fotos-premium/isca-de-peixe-com-batatas-fritas_538646-12784.jpg' },
-  { id: 4, name: 'Batata Crinkle', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
-  { id: 5, name: 'Onion Rings', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://st3.depositphotos.com/1764206/32933/i/450/depositphotos_329339034-stock-photo-homemade-crunchy-fried-onion-rings.jpg' },
-  { id: 6, name: 'Refrigerante Lata', price: 6.5, category: 'Bebidas', desc: '350 ml', img: 'https://s3-sa-east-1.amazonaws.com/deliveryon-uploads/products/sabordabarrafit/36_62b09af6e68a8.png' },
-  { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://media.istockphoto.com/id/926990564/pt/foto/chocolate-milk-and-whipped-cream.jpg?s=612x612&w=0&k=20&c=3W0MDtfaGmNQYGjsdzzMfN1EoJOH8rgjv38qYA8KafE=' },
-  { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://via.placeholder.com/300' },
+  { id: 4, name: 'Batata  Rústica', price: 12.9, category: 'Acompanhamentos', desc: 'Crocante por fora, macia por dentro', img: 'https://media.istockphoto.com/id/466762504/pt/foto/saud%C3%A1vel-crinkle-assado-batatas-fritas.jpg?s=612x612&w=0&k=20&c=cqQ9pVRyaXi74qy-DgElR6-mCHzy4zurZ8gYjg42ghs=' },
+  { id: 5, name: 'Aneis de ebola', price: 14.9, category: 'Acompanhamentos', desc: 'Anéis dourados com leve picância', img: 'https://st3.depositphotos.com/1764206/32933/i/450/depositphotos_329339034-stock-photo-homemade-crunchy-fried-onion-rings.jpg' },
+  { id: 6, name: 'Refrigerante Lata', price: 6.5, category: 'Bebidas', desc: '350 ml', img: 'https://cardapio.nomadasushi.com.br/wp-content/uploads/2024/08/Design-sem-nome.png' },
+  { id: 7, name: 'Milkshake', price: 16.9, category: 'Bebidas', desc: 'Baunilha ou chocolate', img: 'https://guiadacozinha.com.br/wp-content/uploads/2015/01/milk-shake-caseiro-1.jpg' },
+  { id: 8, name: 'Brownie da Casa', price: 11.9, category: 'Sobremesas', desc: 'Com casquinha crocante', img: 'https://recipesblob.oetker.com.br/assets/677216088b6540a0b110ca1d74479af6/1272x764/brownie-com-sorvete.webp' },
 ];
 
 // Seleção de Opção 
@@ -359,7 +358,7 @@ function renderCart() {
   if(state.payment==='Pix' && state.cart.length>0){
     pixArea.style.display='block';
     copyBtn.style.display='inline-block';
-    pixArea.value = `PIX Copie e pague usando o código: 00020126580014BR.GOV.BCB.PIX0114+55499918535485204000053039865405.005802BR5925Requinte Bar e Cozinha6009Sao Leopoldo610805.005802BR5913Pix12362070503***6304C9C0\nValor: ${byId('total').textContent}`;
+    pixArea.value = `PIX Copie e pague usando o código: 151.860.139-19\nValor: ${byId('total').textContent}`;
   } else { pixArea.style.display='none'; copyBtn.style.display='none'; }
 }
 
@@ -399,7 +398,7 @@ byId('whatsappBtn').addEventListener('click', ()=>{
   
   msg += `\n*Pagamento:* ${state.payment}`;
 
-  window.open(`https://wa.me/5549991853548?text=${encodeURIComponent(msg)}`,'_blank');
+  window.open(`https://wa.me/5549999899376?text=${encodeURICompoonent(msg)}`,'_blank');
 });
 
 // Inicialização
