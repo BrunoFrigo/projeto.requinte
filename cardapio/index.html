@@ -3,164 +3,398 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Filmes — Resumo & Temas</title>
+  <title>Filmes — Resumos & Temas</title>
+  <meta name="description" content="Catálogo interativo de filmes: resumos, temas, trailers, favoritos e modo claro/escuro.">
+  <meta property="og:title" content="Resumos e temas — Seleção de filmes">
+  <meta property="og:description" content="Catálogo interativo de filmes com busca, favoritos e trailer.">
+  <meta property="og:type" content="website">
+
   <style>
+    /* =====================
+       VARIÁVEIS E RESET
+       ===================== */
     :root{
-      --bg:#0a0a0a; 
-      --accent:#7dd3fc; 
-      --muted:#94a3b8; 
-      --glass: rgba(255,255,255,0.03);
+      --bg: #0b0f12;
+      --card: rgba(255,255,255,0.03);
+      --glass: rgba(255,255,255,0.04);
+      --text: #e6eef6;
+      --muted: #9aa6b2;
+      --accent: #7dd3fc;
+      --accent-contrast: #04121f;
+      --radius: 12px;
+      --glass-blur: 6px;
+      --shadow: 0 8px 24px rgba(2,6,10,0.6);
+      --max-width: 1100px;
       font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
+    [data-theme="light"]{
+      --bg: #f6f8fa;
+      --card: rgba(6,10,14,0.03);
+      --glass: rgba(255,255,255,0.6);
+      --text: #061017;
+      --muted: #606c76;
+      --accent: #0ea5a4;
+      --accent-contrast: #ffffff;
+      --shadow: 0 8px 24px rgba(11,22,28,0.06);
+    }
+
     *{box-sizing:border-box;margin:0;padding:0}
-    
+    html,body{height:100%}
     body{
-      background: radial-gradient(circle at top left, #1a1a1a 0%, #0a0a0a 60%, #000 100%);
-      color:#e6eef6;
+      background: radial-gradient(circle at 10% 10%, #14181b 0%, var(--bg) 60%);
+      color:var(--text);
       min-height:100vh;
-    }
-    main.container{max-width:1000px;margin:40px auto;padding:24px}
-    header{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-    h1{margin:0;font-size:28px}
-    p.lead{color:var(--muted);margin:6px 0 18px}
-
-    details{
-      position: relative;
-      padding:18px;
-      border-radius:14px;
-      cursor:pointer;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
-      color: #fff;
-      transition: transform .3s, box-shadow .3s;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    details:hover{
-      transform: scale(1.02);
-      box-shadow: 0 0 25px rgba(125,211,252,0.4);
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:24px 18px;
     }
 
-    details::before {
-      content:"";
-      position:absolute;
-      inset:0;
-      background:rgba(0,0,0,0.55);
-      z-index:0;
-    }
+    main.container{max-width:var(--max-width);margin:28px auto;padding:20px}
 
-    summary, header.meta, section.content{
-      position: relative;
-      z-index:1;
-    }
+    /* ============ HEADER ============ */
+    .topbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:space-between}
+    .brand{display:flex;gap:14px;align-items:center}
+    .logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--accent),#60a5fa);font-weight:700;color:var(--accent-contrast)}
+    h1{font-size:20px;margin:0}
+    p.lead{color:var(--muted);margin:2px 0 0;font-size:13px}
 
-    summary{
-      font-size:20px;
-      font-weight:600;
-      outline:none;
-      list-style:none;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:12px;
-      text-shadow: 0 2px 5px rgba(0,0,0,0.8);
-    }
+    /* ============ CONTROLS ============ */
+    .controls{display:flex;gap:8px;align-items:center}
+    .search{display:flex;align-items:center;gap:8px;background:var(--card);padding:8px;border-radius:10px;box-shadow:var(--shadow)}
+    .search input{background:transparent;border:0;outline:none;color:var(--text);width:260px;font-size:14px}
+    .btn{background:var(--accent);color:var(--accent-contrast);border:0;padding:8px 10px;border-radius:10px;font-weight:700;cursor:pointer}
+    .btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,0.06)}
+    .small{padding:6px 8px;font-size:13px}
 
-    summary img.poster{
-      width:50px;
-      height:70px;
-      object-fit:cover;
-      border-radius:6px;
-      border:1px solid rgba(255,255,255,0.3)
-    }
+    /* ============ GRID ============ */
+    #moviesList{display:grid;grid-template-columns:repeat( auto-fit, minmax(280px, 1fr) );gap:18px;margin-top:18px}
 
-    summary::-webkit-details-marker{display:none}
-    header.meta{font-size:13px;color:#e5e5e5;margin-top:8px;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
-    section.content p{margin:0;font-size:15px;line-height:1.4;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
+    details.movieCard{
+      position:relative;padding:14px;border-radius:var(--radius);overflow:hidden;cursor:pointer;min-height:140px;transition:transform .25s ease, box-shadow .25s ease, background-color .25s ease;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);
+      display:flex;flex-direction:column;gap:12px;
+    }
+    details.movieCard:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+
+    details.movieCard::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.25),rgba(0,0,0,0.45));z-index:0}
+
+    summary{display:flex;gap:12px;align-items:center;list-style:none;z-index:1;outline:none}
+    summary .poster{width:84px;height:120px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,255,255,0.06);flex-shrink:0;transition:transform .2s ease}
+    summary:hover .poster{transform:scale(1.03)}
+
+    .meta{font-size:13px;color:var(--muted);z-index:1}
+    .titleWrap{display:flex;flex-direction:column}
+    .title{font-weight:700}
     .tags{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
-    .tag{background:var(--glass);padding:6px 8px;border-radius:999px;font-size:12px;color:#fff;backdrop-filter:blur(4px)}
-    .links{margin-top:10px;display:flex;gap:10px;flex-wrap:wrap}
-    .link-btn{background:var(--accent);color:#04121f;padding:6px 10px;border-radius:6px;font-size:13px;text-decoration:none;font-weight:600;transition:opacity .2s}
-    .link-btn:hover{opacity:.85}
-    footer{margin-top:28px;color:var(--muted);font-size:13px;text-align:center}
+    .tag{background:var(--glass);padding:6px 8px;border-radius:999px;font-size:12px;color:var(--text);backdrop-filter:blur(var(--glass-blur));border:1px solid rgba(255,255,255,0.03)}
 
-    details[open] summary::after{content:"▲";margin-left:auto;font-size:14px;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
-    details summary::after{content:"▼";margin-left:auto;font-size:14px;color:#fff;text-shadow:0 2px 5px rgba(0,0,0,0.8);}
+    .content{z-index:1}
+    .content p{margin-top:6px;line-height:1.45;color:var(--text)}
+    .links{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .link-btn{background:var(--accent);color:var(--accent-contrast);padding:8px 10px;border-radius:8px;font-size:13px;text-decoration:none;font-weight:700;display:inline-flex;align-items:center;gap:8px}
+
+    .fav{margin-left:auto;align-self:flex-start;background:transparent;border:0;color:var(--muted);cursor:pointer;font-size:18px}
+    .fav.active{color:gold}
+
+    details[open] .cardBody{max-height:400px;opacity:1;padding-top:6px}
+    .cardBody{max-height:0;opacity:0;overflow:hidden;transition:all .36s cubic-bezier(.2,.9,.2,1)}
+
+    /* ============ FOOTER ============ */
+    footer{margin-top:22px;color:var(--muted);font-size:13px;text-align:center}
+
+    /* ============ RESPONSIVE ============ */
+    @media (max-width:720px){
+      .search input{width:140px}
+      .title{font-size:15px}
+      summary .poster{width:60px;height:86px}
+      .fav{font-size:16px}
+    }
+
+    /* keyboard focus */
+    details:focus-within{box-shadow:0 0 0 3px rgba(125,211,252,0.12)}
+
   </style>
 </head>
 <body>
-  <main class="container">
-    <header>
-      <h1>Resumos e temas — Seleção de filmes</h1>
-      <p class="lead">Clique no título para abrir as informações dos filmes.</p>
-    </header>
+  <main class="container" id="app">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo">RF</div>
+        <div>
+          <h1>Resumos e temas — Seleção de filmes</h1>
+          <p class="lead">Clique no título para abrir — use busca, favoritos e modo claro/escuro.</p>
+        </div>
+      </div>
 
-    <section id="moviesList" style="display:flex;flex-direction:column;gap:18px">
+      <div class="controls">
+        <div class="search" role="search">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <input id="q" placeholder="Buscar por título, tema, ano..." aria-label="Buscar filmes">
+        </div>
+        <button class="btn small" id="expandAll" title="Expandir todos">Expandir todos</button>
+        <button class="btn small ghost" id="themeToggle" title="Alternar tema">Modo</button>
+      </div>
+    </div>
 
-      <details style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdnb6FG3ROcGi6huNl68GHo5e22MwjVVBqS9QPhVtqwRxUH32HOsHdn-BGnUS-s3mFPM&usqp=CAU')" data-title="O Dilema das Redes" data-tags="algoritmos privacidade sociedade documentário">
-        <summary>
-          <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdnb6FG3ROcGi6huNl68GHo5e22MwjVVBqS9QPhVtqwRxUH32HOsHdn-BGnUS-s3mFPM&usqp=CAU"/>
-          O Dilema das Redes (The Social Dilemma)
-        </summary>
-        <header class="meta">Documentário • 2020 • Direção: Jeff Orlowski</header>
-        <section class="content">
-          <p>Explora como as redes sociais são projetadas para prender a atenção, viciar e extrair dados dos usuários, o que pode ter impactos negativos na saúde mental, na sociedade e na democracia.</p>
-        </section>
-      </details>
+    <section id="moviesList" aria-live="polite">
 
-      <details style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU3l0mUMhCQtDav3MlmfksOZsHnWOiCbnaCA&s')" data-title="Os Estagiários" data-tags="comédia trabalho reinvenção tecnologia">
-        <summary>
-          <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU3l0mUMhCQtDav3MlmfksOZsHnWOiCbnaCA&s"/>
-          Os Estagiários (The Internship)
-        </summary>
-        <header class="meta">Comédia • 2013 • Direção: Shawn Levy</header>
-        <section class="content">
-          <p>Comédia sobre dois vendedores desempregados que conseguem estágio em uma big tech. Mostra humor, choque geracional e reinvenção profissional.</p>
-        </section>
-      </details>
-
-      <details style="background-image:url('https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ')" data-title="Filhos do Paraíso" data-tags="infância empatia família drama iraniano">
-        <summary>
-          <img class="poster" src="https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ"/>
-          Filhos do Paraíso (Children of Heaven)
-        </summary>
-        <header class="meta">Drama • 1997 • Direção: Majid Majidi</header>
-        <section class="content">
-          <p>Filme iraniano sobre irmãos que dividem um único par de sapatos. Simples e emocionante, fala de empatia e inocência.</p>
-        </section>
-      </details>
-
-      <details style="background-image:url('https://m.media-amazon.com/images/M/MV5BZDdhNTY3YTgtYmQwMC00MjM1LTgzYzMtMGM1N2E0NWM1NDlkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg')" data-title="Eu Robô" data-tags="ia ética ação ficção científica asimov">
-        <summary>
-          <img class="poster" src="https://m.media-amazon.com/images/M/MV5BZDdhNTY3YTgtYmQwMC00MjM1LTgzYzMtMGM1N2E0NWM1NDlkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg"/>
-          Eu, Robô (I, Robot)
-        </summary>
-        <header class="meta">Ação / Ficção científica • 2004 • Direção: Alex Proyas</header>
-        <section class="content">
-          <p>Baseado em Asimov, mostra detetive investigando crime cometido por robô. Discute IA, ética e confiança nas máquinas.</p>
-        </section>
-      </details>
-
-      <details style="background-image:url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgkQbwBiVZIHoTsJHQGzND3zEHtWCemRcKmg&s')" data-title="Matrix" data-tags="simulação filosofia ação ficção científica cyberpunk">
-        <summary>
-          <img class="poster" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgkQbwBiVZIHoTsJHQGzND3zEHtWCemRcKmg&s"/>
-          Matrix (The Matrix)
-        </summary>
-        <header class="meta">Ficção científica • 1999 • Direção: Wachowski</header>
-        <section class="content">
-          <p>Neo descobre que vive numa simulação criada por máquinas. Mistura ação, filosofia e reflexões sobre realidade e livre-arbítrio.</p>
-        </section>
-      </details>
+      <!-- Cards serão gerados via JavaScript a partir de data abaixo -->
 
     </section>
 
     <footer>
-      <p>Use a barra de busca para filtrar por nome ou tema, por exemplo "IA", "Comédia" ou "Filosofia".</p>
+      <p>Use o campo de busca para filtrar por nome, gênero ou tema. Favoritos são salvos localmente no seu browser.</p>
+      <p style="margin-top:8px">Desenvolvido por Bruno Frigo e Felipe Ribas</p>
     </footer>
   </main>
 
+  <script>
+    // ======= Dados iniciais (fácil de expandir) =======
+    const MOVIES = [
+      {
+        title: "O Dilema das Redes",
+        original: "The Social Dilemma",
+        year: 2020,
+        type: "Documentário",
+        director: "Jeff Orlowski",
+        tags: ["algoritmos","privacidade","sociedade","documentário"],
+        poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTtdnb6FG3ROcGi6huNl68GHo5e22MwjVVBqS9QPhVtqwRxUH32HOsHdn-BGnUS-s3mFPM&usqp=CAU",
+        backdrop: "https://datapolicy.co/wp-content/uploads/2021/03/resenha-datapolicy-documentario-dilema-das-redes.jpg",
+        summary: "Explora como as redes sociais são projetadas para prender a atenção e extrair dados, mostrando impactos na saúde mental, na política e na sociedade.",
+        trailer: "https://www.youtube.com/watch?v=uaaC57tcci0"
+      },
+      {
+        title: "Os Estagiários",
+        original: "The Internship",
+        year: 2013,
+        type: "Comédia",
+        director: "Shawn Levy",
+        tags:["comédia","trabalho","reinvenção","tecnologia"],
+        poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQU3l0mUMhCQtDav3MlmfksOZsHnWOiCbnaCA&s",
+        backdrop: "https://imusic.b-cdn.net/images/item/original/234/5039036063234.jpg?the-internship-2013-the-internship-dvd&class=scaled&v=1491680482",
+        summary: "Dois vendedores conseguem estágio em uma big tech; humor e choque geracional na busca por reinvenção profissional.",
+        trailer: "https://www.youtube.com/watch?v=8x7mm6L_cXQ"
+      },
+      {
+        title: "Filhos do Paraíso",
+        original: "Children of Heaven",
+        year: 1997,
+        type: "Drama",
+        director: "Majid Majidi",
+        tags:["infância","empatia","família","drama","iraniano"],
+        poster: "https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ",
+        backdrop: "https://play-lh.googleusercontent.com/E2b6U235ZIWVYiNu4x3npgdoXrRuZk9TpbVTEqxAg0GaS5_pUmHsRY7Pp8gpUh_dCmbrMQ",
+        summary: "Irmãos dividem um único par de sapatos — um filme simples e emocionante sobre empatia e inocência.",
+        trailer: "https://youtu.be/UtAqgrD_hz8?si=y80a7UDmHIgvWrPU"
+      },
+      {
+        title: "Eu, Robô",
+        original: "I, Robot",
+        year: 2004,
+        type: "Ficção científica",
+        director: "Alex Proyas",
+        tags:["ia","ética","ação","ficção científica","asimov"],
+        poster: "https://m.media-amazon.com/images/M/MV5BZDdhNTY3YTgtYmQwMC00MjM1LTgzYzMtMGM1N2E0NWM1NDlkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+        backdrop: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRi_TqyT-FqINj7nPHIQwTa3Fo3weU9hc52dQ&s",
+        summary: "Detetive investiga um crime possivelmente cometido por um robô — debates sobre IA, ética e confiança.",
+        trailer: "https://www.youtube.com/watch?v=sTc9mQ3X-1Q"
+      },
+      {
+        title: "Matrix",
+        original: "The Matrix",
+        year: 1999,
+        type: "Ficção científica",
+        director: "Wachowski",
+        tags:["simulação","filosofia","ação","ficção científica","cyberpunk"],
+        poster: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSgkQbwBiVZIHoTsJHQGzND3zEHtWCemRcKmg&s",
+        backdrop: "https://ingresso-a.akamaihd.net/prd/img/movie/matrix/12aa381c-42ca-495c-a807-fb13e2016c8c.webp",
+        summary: "Neo descobre que vive numa simulação criada por máquinas — ação, filosofia e reflexões sobre realidade.",
+        trailer: "https://youtu.be/m8e-FF8MsqU?si=F2AFmpVqAacHXCvn"
+      }
+    ];
+
+    // ======= Estado e utilitários =======
+    const moviesList = document.getElementById('moviesList');
+    const qInput = document.getElementById('q');
+    const expandAllBtn = document.getElementById('expandAll');
+    const themeToggle = document.getElementById('themeToggle');
+    const THEME_KEY = 'rf_theme_v1';
+    const FAV_KEY = 'rf_favs_v1';
+
+    // Recupera favoritos do localStorage
+    let favs = JSON.parse(localStorage.getItem(FAV_KEY) || '[]');
+
+    // Aplica tema salvo
+    const savedTheme = localStorage.getItem(THEME_KEY);
+    if(savedTheme){document.documentElement.setAttribute('data-theme', savedTheme)}
+
+    // ======= Renderização =======
+    function renderList(filter = ''){
+      const term = filter.trim().toLowerCase();
+      moviesList.innerHTML = '';
+      const filtered = MOVIES.filter(m => {
+        if(!term) return true;
+        return (
+          m.title.toLowerCase().includes(term) ||
+          (m.original && m.original.toLowerCase().includes(term)) ||
+          (m.tags && m.tags.join(' ').toLowerCase().includes(term)) ||
+          (m.type && m.type.toLowerCase().includes(term)) ||
+          (String(m.year).includes(term))
+        );
+      });
+
+      if(filtered.length === 0){
+        const empty = document.createElement('div');
+        empty.style.padding = '28px';
+        empty.style.borderRadius = '12px';
+        empty.style.background = 'var(--card)';
+        empty.style.color = 'var(--muted)';
+        empty.textContent = 'Nenhum filme encontrado.';
+        moviesList.appendChild(empty);
+        return;
+      }
+
+      filtered.forEach((m, idx) => {
+        const d = document.createElement('details');
+        d.className = 'movieCard';
+        d.dataset.title = m.title;
+        d.style.backgroundImage = `linear-gradient(0deg, rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url(${m.backdrop})`;
+
+        const summary = document.createElement('summary');
+
+        const img = document.createElement('img');
+        img.className = 'poster';
+        img.src = m.poster;
+        img.alt = `${m.title} — poster`;
+
+        const titleWrap = document.createElement('div');
+        titleWrap.className = 'titleWrap';
+
+        const title = document.createElement('div');
+        title.className = 'title';
+        title.textContent = `${m.title} ${m.original ? `(${m.original})` : ''}`;
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        meta.textContent = `${m.type} • ${m.year} • Direção: ${m.director}`;
+
+        titleWrap.appendChild(title);
+        titleWrap.appendChild(meta);
+
+        // favorito
+        const favBtn = document.createElement('button');
+        favBtn.className = 'fav';
+        favBtn.setAttribute('aria-label','Favoritar filme');
+        favBtn.innerHTML = favs.includes(m.title) ? '★' : '☆';
+        if(favs.includes(m.title)) favBtn.classList.add('active');
+        favBtn.addEventListener('click', (ev) => {
+          ev.stopPropagation();
+          toggleFav(m.title, favBtn);
+        });
+
+        summary.appendChild(img);
+        summary.appendChild(titleWrap);
+        summary.appendChild(favBtn);
+
+        d.appendChild(summary);
+
+        // body
+        const body = document.createElement('div');
+        body.className = 'cardBody';
+
+        const content = document.createElement('div');
+        content.className = 'content';
+        const p = document.createElement('p');
+        p.textContent = m.summary;
+        content.appendChild(p);
+
+        const tags = document.createElement('div');
+        tags.className = 'tags';
+        m.tags.forEach(t => {
+          const span = document.createElement('span');
+          span.className = 'tag';
+          span.textContent = t;
+          span.tabIndex = 0;
+          span.setAttribute('role','button');
+          span.addEventListener('click', (e) => {
+            qInput.value = t; qInput.dispatchEvent(new Event('input'));
+          });
+          tags.appendChild(span);
+        });
+
+        const links = document.createElement('div');
+        links.className = 'links';
+        const trailer = document.createElement('a');
+        trailer.className = 'link-btn';
+        trailer.href = m.trailer;
+        trailer.target = '_blank';
+        trailer.rel = 'noopener';
+        trailer.textContent = 'Ver trailer';
+
+        const more = document.createElement('a');
+        more.className = 'link-btn ghost';
+        more.href = '#';
+        more.textContent = 'Mais info';
+        more.addEventListener('click', (e) => { e.preventDefault(); alert(`${m.title} — ${m.type} (${m.year})\nDireção: ${m.director}`); });
+
+        links.appendChild(trailer);
+        links.appendChild(more);
+
+        body.appendChild(content);
+        body.appendChild(tags);
+        body.appendChild(links);
+
+        d.appendChild(body);
+        moviesList.appendChild(d);
+
+        // abrir se termo exatamente for o título
+        if(qInput.value.trim().toLowerCase() === m.title.toLowerCase()){
+          d.open = true;
+        }
+      });
+    }
+
+    // ======= Favoritos =======
+    function toggleFav(title, btn){
+      const i = favs.indexOf(title);
+      if(i === -1){ favs.push(title); btn.classList.add('active'); btn.innerHTML = '★'; }
+      else{ favs.splice(i,1); btn.classList.remove('active'); btn.innerHTML = '☆'; }
+      localStorage.setItem(FAV_KEY, JSON.stringify(favs));
+    }
+
+    // ======= Controles =======
+    qInput.addEventListener('input', (e) =>{
+      renderList(e.target.value);
+    });
+
+    let expanded = false;
+    expandAllBtn.addEventListener('click', ()=>{
+      const cards = document.querySelectorAll('details.movieCard');
+      expanded = !expanded;
+      cards.forEach(c => c.open = expanded);
+      expandAllBtn.textContent = expanded ? 'Fechar todos' : 'Expandir todos';
+    });
+
+    themeToggle.addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme');
+      const next = cur === 'light' ? 'dark' : 'light';
+      if(next === 'light') document.documentElement.setAttribute('data-theme','light');
+      else document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem(THEME_KEY, next);
+    });
+
+    // ======= Inicialização =======
+    renderList();
+
+    // Pequena melhoria de acessibilidade: Enter em tags de filtro
+    document.addEventListener('keydown', (e)=>{
+      if(e.key === 'k' && (e.ctrlKey || e.metaKey)){ e.preventDefault(); qInput.focus(); qInput.select(); }
+    });
+
+    // Expor para console (debug / extensão)
+    window.RF = { MOVIES, renderList };
+
+
+  </script>
 </body>
 </html>
